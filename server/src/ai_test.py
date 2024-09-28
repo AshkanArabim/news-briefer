@@ -29,6 +29,13 @@ model = GenerativeModel(
         "Depending on the user's preference, the summary can be generated in English or another language."
     ]
 )
+def summarize_news(content):
+    # TODO: Implement this function
+    # input: text output from parse_rss.get_top5_articles
+    # output: text output from model.generate_content
+    return
+
+
 
 # Generate the news brief
 if __name__ == "__main__":
