@@ -1,7 +1,6 @@
 import parse_rss
 import goog_tts
 from goog_llm import summarize_news
-import vertexai
 from vertexai.generative_models import GenerativeModel
 
 if __name__ == "__main__":
