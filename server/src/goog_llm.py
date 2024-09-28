@@ -3,7 +3,7 @@ import json
 import vertexai
 from vertexai.generative_models import GenerativeModel
 from dotenv import load_dotenv
-import parse_rss
+#import parse_rss
 
 load_dotenv()
 
