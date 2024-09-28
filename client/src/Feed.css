@@ -40,7 +40,7 @@
 .feed-title {
   font-size: 36px;
   color: brown;
-  margin-top: 50px; /* Add some space below the Home button */
+  margin-top: -750px; /* Add some space below the Home button */
 }
 
 /* Container for text and icon */
