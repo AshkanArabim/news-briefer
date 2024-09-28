@@ -34,19 +34,26 @@ def get_article_content(article_url):
         return f"Failed to retrieve the article. Status code: {response.status_code}"
 
 
+"""
+:param rss_url: The URL of the RSS feed to fetch
+:param n: The number of articles to fetch
+
+:return: A list of article headlines and a concatenated string of the article content
+"""
 def get_topn_articles(rss_url, n=5):
     # Fetch the RSS feed
     feed = feedparser.parse(rss_url)
 
     # Get the top 5 links and
     articles = []
+    headlines = []
     for entry in feed.entries[:n]:
         if (get_article_content(entry.link)) == "Could not find the article body.":
             continue
-        articles.append(entry.title)
+        headlines += [entry.title]
         articles.append(get_article_content(entry.link))
 
-    return "\n\n".join(articles) if articles else "No articles found."
+    return headlines, "\n\n".join(articles) if articles else "No articles found."
 
 
 if __name__ == "__main__":

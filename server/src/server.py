@@ -55,10 +55,10 @@ def get_text():
     return respond_invalid_auth()
   # link will be replaced by db query to sources
   # n param = number of articles to summarize, default is 5 articles
-  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  headlines, text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
   summary = goog_llm.summarize_news(text)
 
-  return (jsonify({'summary': summary}), 200)
+  return (jsonify({'headlines' : headlines,'summary': summary}), 200)
   
 @app.route('/get-audio', methods=["GET"])
 def get_audio():
