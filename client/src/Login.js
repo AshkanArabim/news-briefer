@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
 
-function Login() {
+function Login({ translations }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,7 +15,7 @@ function Login() {
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+        <h2>{translations.loginButton}</h2>
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -34,8 +34,10 @@ function Login() {
             required
           />
         </div>
-        <button type="submit">Login</button>
-        <p><Link to="/">Back to Home</Link></p>  {/* Link back to home page */}
+        <button type="submit">{translations.loginButton}</button>
+        <p>
+          <Link to="/">{translations.homeTitle}</Link>
+        </p>
       </form>
     </div>
   );

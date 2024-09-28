@@ -1,41 +1,24 @@
-// src/SignUp.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './SignUp.css';  // Optional: Create a SignUp.css file for custom styling
+import './SignUp.css';
 
-function SignUp() {
-  const [language, setLanguage] = useState('English');  // Use 'English' as the default selected language
+function SignUp({ translations }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle sign-up logic here
-    console.log('Preferred Language:', language);
+    // You can handle form submission logic here
     console.log('Email:', email);
     console.log('Password:', password);
+    console.log('Confirm Password:', confirmPassword);
   };
 
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
-        <div className="form-group">
-          <label>Preferred Language:</label>
-          {/* Dropdown for selecting the language */}
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            required
-          >
-            <option value="English">English</option>
-            <option value="Spanish">Spanish</option>
-            <option value="French">French</option>
-            <option value="German">German</option>
-            <option value="Chinese">Mandarin</option>
-            <option value="Japanese">Japanese</option>
-          </select>
-        </div>
+        <h2>{translations ? translations.signUpButton : 'Sign Up'}</h2> {/* Translated Heading */}
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -54,8 +37,19 @@ function SignUp() {
             required
           />
         </div>
-        <button type="submit">Sign Up</button>
-        <p><Link to="/">Back to Home</Link></p>  {/* Link to go back to the home page */}
+        <div className="form-group">
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">{translations ? translations.signUpButton : 'Sign Up'}</button>
+        <p>
+          <Link to="/">{translations ? translations.homeTitle : 'Home'}</Link>
+        </p>
       </form>
     </div>
   );

@@ -1,22 +1,21 @@
-// src/Home.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-function Home() {
+function Home({ translations }) {
   return (
-    <div className="home-container">  {/* Add a container div to center everything */}
-      <h1 className="home-title">Home</h1>
-      <h1 className="home-subtitle">What's happening today?</h1>
+    <div className="home-container">
+      <h1 className="home-title">{translations.homeTitle}</h1>
+      <h1 className="home-subtitle">{translations.homeSubtitle}</h1>
       <div className="button-container">
-        {/* Create a button that navigates to the Login page */}
         <Link to="/login">
-          <button className="home-button">Login</button>
+          <button className="home-button">{translations.loginButton}</button>
         </Link>
-        
-        {/* Make Sign Up also look like a button */}
         <Link to="/signup">
-          <button className="home-button">Sign Up</button>
+          <button className="home-button">{translations.signUpButton}</button>
+        </Link>
+        <Link to="/feed">
+          <button className="home-button">{translations.feedButton}</button>
         </Link>
       </div>
     </div>

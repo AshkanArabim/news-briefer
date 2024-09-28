@@ -1,0 +1,50 @@
+/* Container for the Feed page */
+.feed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f0f2f5;
+  background-image: url('../public/background-register.jpg'); /* Replace with your image path */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative; /* Ensure relative positioning for the feed container */
+}
+
+/* Home button container positioned at the top center */
+.home-button-container {
+  position: absolute;  /* Absolute positioning within the feed container */
+  top: 20px;           /* Push the button down from the top */
+  left: 50%;           /* Center horizontally based on parent */
+  transform: translateX(-50%); /* Center the button perfectly */
+}
+
+/* Style the Home button */
+.home-button {
+  padding: 10px 20px;
+  background-color: #5a8187;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+}
+
+/* Style for the Feed page title */
+.feed-title {
+  font-size: 36px;
+  color: #333;
+  margin-top: 50px; /* Add some space below the Home button */
+}
+
+/* Paragraph styling */
+p {
+  font-size: 20px;
+  color: #555;
+}

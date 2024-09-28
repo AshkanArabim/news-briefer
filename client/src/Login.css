@@ -3,7 +3,10 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f2f5;
+  background-image: url('../public/background.jpg'); /* Replace with your image path */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .login-form {
@@ -42,16 +45,4 @@ button {
 
 button:hover {
   background-color: #0056b3;
-}
-
-
-.signup-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-image: url('../public/background.jpg'); /* Replace with your image path */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
 }
