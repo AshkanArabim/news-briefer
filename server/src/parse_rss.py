@@ -55,6 +55,20 @@ def get_topn_articles(rss_url, n=5):
 
     return headlines, "\n\n".join(articles) if articles else "No articles found."
 
+def get_topn_headlines(rss_url, n=5):
+    # Fetch the RSS feed
+    feed = feedparser.parse(rss_url)
+
+    # Get the top n links
+
+    headlines = []
+    for entry in feed.entries[:n]:
+        if (get_article_content(entry.link)) == "Could not find the article body.":
+            continue
+        headlines += [entry.title]
+
+    return headlines
+
 
 if __name__ == "__main__":
     # Fetch the RSS feed
