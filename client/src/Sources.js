@@ -45,9 +45,6 @@ function Sources({ translations }) {
 
           className="url-input"
         />
-        
-
-
 
         <div className="url-buttons">
           {/* Add URL Button */}
