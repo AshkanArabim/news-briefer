@@ -1,0 +1,17 @@
+meta {
+  name: get text
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:5000/get-text
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidXNlciJ9.EPU0WgeEQ952VGBYDGayQTAXgUmVzM_sVrVCgxsUIiU"
+  }
+}

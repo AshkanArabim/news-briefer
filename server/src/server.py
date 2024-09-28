@@ -11,15 +11,71 @@ app = flask.Flask(__name__)
 if len(os.environ.get("JWT_SECRET_KEY")) == 0:
   print("jwt secret key not found")
   exit()
+  
+RESPONSE_MESSAGES = {
+  "invalid_auth": "Invalid authentication token!",
+  "valid_auth": "Token is valid. Welcome back!" # this is mostly for debugging
+}
 
+# helpers
+def check_auth(req_body):
+  token = req_body.get('token')
+  if not token:
+    return False
+  try:
+    decoded = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
+    return decoded.get('user') is not None
+  except jwt.InvalidTokenError:
+    return False
+  
+def respond_invalid_auth():
+  return jsonify({'message': RESPONSE_MESSAGES["invalid_auth"]}), 401
+
+def respond_valid_auth():
+  return jsonify({'message': RESPONSE_MESSAGES["valid_auth"]}), 200
+
+# API endpoints
+# TODO: make login generate a random RSA token
 @app.route('/login', methods=['POST'])
 def login():
-  auth = request.json
+  req_body = request.json
   # TODO: do a lookup in mongodb
-  if auth and auth['username'] == 'user' and auth['password'] == 'pass':
-    token = jwt.encode({'user': auth['username']}, os.environ.get("JWT_SECRET_KEY"))
+  if req_body and req_body['username'] == 'user' and req_body['password'] == 'pass':
+    token = jwt.encode({'user': req_body['username']}, os.environ.get("JWT_SECRET_KEY"))
     return jsonify({'token': token})
   return jsonify({'message': 'Invalid credentials'}), 401
 
+@app.route('/get-text', methods=["GET"])
+def get_text():
+  req_body = request.json
+  if not check_auth(req_body):
+    return respond_invalid_auth()
+  # TODO: call nate's script
+  return respond_valid_auth()
+  
+@app.route('/get-audio', methods=["GET"])
+def get_audio():
+  req_body = request.json
+  if not check_auth(req_body):
+    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
+  # TODO: call alex's api
+  return respond_valid_auth()
+
+@app.route('/add-source', methods=["POST"])
+def add_source():
+  req_body = request.json
+  if not check_auth(req_body):
+    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
+  # TODO: add to db
+  return respond_valid_auth()
+
+@app.route('/remove-source', methods=["POST"])
+def remove_source():
+  req_body = request.json
+  if not check_auth(req_body):
+    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
+  # TODO: remove source from db by its id?
+  return respond_valid_auth()
+
 if __name__ == '__main__':
-  app.run(debug=True)
+  app.run(debug=True) # TODO: remove in prod
