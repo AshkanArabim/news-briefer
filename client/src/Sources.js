@@ -41,8 +41,14 @@ function Sources({ translations }) {
           placeholder="Enter a source URL"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleAddUrl(); }}
+
           className="url-input"
         />
+        
+
+
+
         <div className="url-buttons">
           {/* Add URL Button */}
           <button className="home-button" onClick={handleAddUrl}>

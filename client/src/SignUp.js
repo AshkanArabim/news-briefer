@@ -17,7 +17,17 @@ function SignUp({ translations }) {
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSubmit}>
+        {/* Home Button */}
+        <div className="button-group">
+          <Link to="/" className="home-button">
+            {translations.homeTitle}
+          </Link>
+        </div>
         <h2>{translations ? translations.signUpButton : 'Sign Up'}</h2>
+
+
+
+
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -51,12 +61,8 @@ function SignUp({ translations }) {
           {translations ? translations.signUpButton : 'Sign Up'}
         </button>
 
-        {/* Home Button below the Sign Up Button */}
-        <div className="home-button-container">
-          <Link to="/" className="home-button">
-            {translations.homeTitle}
-          </Link>
-        </div>
+
+
       </form>
     </div>
   );
