@@ -86,10 +86,10 @@ def get_text():
     return respond_invalid_auth()
   # link will be replaced by db query to sources
   # n param = number of articles to summarize, default is 5 articles
-  headlines, text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
   summary = goog_llm.summarize_news(text)
 
-  return (jsonify({'headlines' : headlines,'summary': summary}), 200)
+  return (jsonify({'summary': summary}), 200)
   
 @app.route('/get-audio', methods=["GET"])
 def get_audio():
@@ -97,7 +97,7 @@ def get_audio():
   if not check_auth(req_body):
     return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
   # link will be replaced by db query to sources
-  headlines, text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
   summary = goog_llm.summarize_news(text)
 
   # goog_tts.text_to_wav("name of voice model", text to say)
