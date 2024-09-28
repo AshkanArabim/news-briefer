@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "news briefer api tests",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
