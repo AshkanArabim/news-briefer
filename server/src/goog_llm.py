@@ -35,6 +35,10 @@ model = GenerativeModel(
     ]
 )
 # Initialize the model
+"""
+:param content: The content to summarize
+:return: The generated summary
+"""
 def summarize_news(content):
     # input: text output from parse_rss.get_top5_articles
     # content = parse_rss.get_top5_articles("https://www.cbsnews.com/latest/rss/politics")
