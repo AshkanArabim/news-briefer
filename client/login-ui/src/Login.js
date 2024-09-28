@@ -1,5 +1,5 @@
-// src/Login.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Login.css';
 
 function Login() {
@@ -35,6 +35,7 @@ function Login() {
           />
         </div>
         <button type="submit">Login</button>
+        <p><Link to="/">Back to Home</Link></p>  {/* Link back to home page */}
       </form>
     </div>
   );

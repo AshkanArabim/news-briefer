@@ -1,12 +1,13 @@
-.login-container {
+/* src/SignUp.css */
+.signup-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f2f5;
+  background-color: #f7f7f7;
 }
 
-.login-form {
+.signup-form {
   width: 300px;
   padding: 20px;
   background: white;
@@ -21,13 +22,14 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  text-align: left;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+  margin-bottom: 10px;
 }
 
 button {
