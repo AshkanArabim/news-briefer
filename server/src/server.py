@@ -1,15 +1,46 @@
 import jwt
 import flask
-from flask import request, jsonify
+from flask import Flask, g, request, jsonify
 from dotenv import load_dotenv
 import os
 import parse_rss
 import goog_llm
 import goog_tts
+import pg8000
 
 load_dotenv()
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
+
+# fetch environment variables
+DB_USERNAME = os.environ.get("DB_USERNAME")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+if DB_USERNAME == None or DB_PASSWORD == None:
+    raise Exception("DB_USERNAME or DB_PASSWORD env vars not set!")
+
+# Database configuration
+app.config['DB_HOST'] = '127.0.0.1'
+app.config['DB_PORT'] = 5432
+app.config['DB_USER'] = DB_USERNAME
+app.config['DB_PASSWORD'] = DB_PASSWORD
+app.config['DB_NAME'] = 'news_briefer'
+
+def get_db():
+    if 'db' not in g:
+        g.db = pg8000.connect(
+            host=app.config['DB_HOST'],
+            port=app.config['DB_PORT'],
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD'],
+            database=app.config['DB_NAME']
+        )
+    return g.db
+
+@app.teardown_appcontext
+def close_db(error):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
 if len(os.environ.get("JWT_SECRET_KEY")) == 0:
   print("jwt secret key not found")
