@@ -59,9 +59,8 @@ def check_auth(req_body):
     return False
   try:
     decoded = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
-    if decoded.get('user') is not None:
-      g.current_user = decoded["user"]
-      print(decoded["user"]) # DEBUG
+    if decoded.get('email') is not None:
+      g.current_user_email = decoded["email"]
       return True
     return False
   except jwt.InvalidTokenError:
@@ -78,9 +77,9 @@ def respond_valid_auth():
 @app.route('/login', methods=['POST'])
 def login():
   req_body = request.json
-  # TODO: do a lookup in mongodb
-  if req_body and req_body['username'] == 'user' and req_body['password'] == 'pass':
-    token = jwt.encode({'user': req_body['username']}, os.environ.get("JWT_SECRET_KEY"))
+  # TODO: do a lookup in mongodb, this is hardcoded
+  if req_body and req_body['email'] == 'email' and req_body['password'] == 'pass':
+    token = jwt.encode({'email': req_body['email']}, os.environ.get("JWT_SECRET_KEY"))
     return jsonify({'token': token})
   return jsonify({'message': 'Invalid credentials'}), 401
 
@@ -119,7 +118,7 @@ def get_soruces():
   
   db = get_db()
   cursor = db.cursor()
-  cursor.execute("select * from sources where user = " + g.current_user)
+  cursor.execute("select * from sources where email = " + g.current_user_email)
   
   results = cursor.fetchall() 
   # ^^ returns a tuple: (<email>, <source>)
