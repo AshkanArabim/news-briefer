@@ -1,5 +1,11 @@
+import os
+import json
+from dotenv import load_dotenv
 import google.cloud.texttospeech as tts
 
+load_dotenv()
+
+API_KEY = json.loads(os.environ.get("TTS_API_KEY"))
 
 def text_to_wav(voice_name: str, text: str):
     language_code = "-".join(voice_name.split("-")[:2])
