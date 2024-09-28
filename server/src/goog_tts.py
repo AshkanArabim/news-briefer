@@ -18,7 +18,7 @@ def text_to_audio_stream(voice_name: str, text: str):
 
     # Define the voice parameters
     voice_params = tts.VoiceSelectionParams(
-        language_code=language_code, name=voice_name
+        language_code=language_code, name= "en-US-Studio-O"
     )
 
     # Configure audio encoding as MP3 for streaming
