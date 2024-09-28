@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import parse_rss
 import goog_llm
+import goog_tts
 
 load_dotenv()
 
@@ -53,6 +54,7 @@ def get_text():
   if not check_auth(req_body):
     return respond_invalid_auth()
   # link will be replaced by db query to sources
+  # n param = number of articles to summarize, default is 5 articles
   text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
   summary = goog_llm.summarize_news(text)
 
@@ -63,8 +65,15 @@ def get_audio():
   req_body = request.json
   if not check_auth(req_body):
     return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
-  # TODO: call alex's api
-  return respond_valid_auth()
+  # link will be replaced by db query to sources
+  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  summary = goog_llm.summarize_news(text)
+
+  # goog_tts.text_to_wav("name of voice model", text to say)
+  # some voice models: en-US-Studio-O, fr-FR-Neural2-A.wav, es-ES-Standard-B
+
+  voice_stream = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
+  return voice_stream
 
 @app.route('/add-source', methods=["POST"])
 def add_source():
