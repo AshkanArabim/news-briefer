@@ -6,7 +6,7 @@
   to {
     opacity: 1;
   }
-}
+} 
 
 /* src/Home.css */
 .home-title {
@@ -68,4 +68,5 @@ body {
   background-size: cover;                   /* Scale image to cover the full screen */
   background-position: center;              /* Center the background image */
   background-repeat: no-repeat;             /* Prevent repetition of the image */
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
 }

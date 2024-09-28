@@ -1,3 +1,30 @@
+/* Add the animation styles */
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to new links */
+.url-item {
+  font-size: 18px;
+  color: #333;
+  list-style: none;
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  animation: slideUpFadeIn .75s ease-in-out; /* New animation */
+}
+
+
 /* Container for the Sources page */
 .sources-container {
   display: flex;

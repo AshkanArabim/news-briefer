@@ -31,7 +31,6 @@ function Sources({ translations }) {
       {/* Centered text */}
       <div className="main-text">
         <h1>Sources</h1>
-        <p>Here you can add and remove sources</p>
       </div>
       
       {/* URL Management Section */}

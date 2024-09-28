@@ -47,13 +47,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="language-dropdown">
-          <select onChange={handleLanguageChange} value={language} className="language-select">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-          </select>
-        </div>
 
         <Routes>
           <Route path="/" element={<Home translations={translations[language]} />} />

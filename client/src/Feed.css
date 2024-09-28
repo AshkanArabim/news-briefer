@@ -1,3 +1,13 @@
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+} 
+
 /* Container for the Feed page */
 .feed-container {
   display: flex;
@@ -38,6 +48,7 @@
 
 /* Style for the Feed page title */
 .feed-title {
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
   font-size: 36px;
   color: brown;
   margin-top: -750px; /* Add some space below the Home button */
@@ -48,12 +59,14 @@
   display: flex; /* Use flex to align text and image side by side */
   align-items: center;
   margin-top: 15px;
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
 }
 
 .feed-subtitle {
   font-size: 20px;
   color: brown;
   margin-right: 10px; /* Add some space between text and icon */
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
 }
 
 .speaker-icon {
@@ -61,4 +74,5 @@
   height: 30px;
   cursor: pointer; /* Change cursor to pointer */
   vertical-align: middle; /* Align icon vertically with text */
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
 }

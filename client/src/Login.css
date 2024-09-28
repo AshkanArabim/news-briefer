@@ -1,3 +1,13 @@
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Container for the login page */
 .login-container {
   display: flex;
@@ -8,6 +18,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
 }
 
 /* Login form styles */
