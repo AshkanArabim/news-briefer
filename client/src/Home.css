@@ -1,3 +1,13 @@
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* src/Home.css */
 .home-title {
   color: #5a8187;
@@ -11,6 +21,7 @@
   align-items: center;     /* Center vertically */
   height: 100vh;           /* Set the height to the full viewport */
   flex-direction: column;  /* Stack elements vertically */
+  animation: fadeIn 1.5s ease-in-out; /* Add fade-in animation */
 }
 
 /* Container for buttons */
