@@ -59,4 +59,4 @@ def get_topn_articles(rss_url, n=5):
 if __name__ == "__main__":
     # Fetch the RSS feed
     rss_url = 'https://www.cbsnews.com/latest/rss/politics'
-    print(get_top5_articles(rss_url))
+    print(get_topn_articles(rss_url))
