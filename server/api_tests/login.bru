@@ -6,6 +6,14 @@ meta {
 
 post {
   url: http://127.0.0.1:5000/login
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "username": "user",
+    "password": "pass"
+  }
+  
 }
