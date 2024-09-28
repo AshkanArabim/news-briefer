@@ -3,6 +3,8 @@ import flask
 from flask import request, jsonify
 from dotenv import load_dotenv
 import os
+import parse_rss
+import goog_llm
 
 load_dotenv()
 
@@ -50,8 +52,11 @@ def get_text():
   req_body = request.json
   if not check_auth(req_body):
     return respond_invalid_auth()
-  # TODO: call nate's script
-  return respond_valid_auth()
+  # link will be replaced by db query to sources
+  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  summary = goog_llm.summarize_news(text)
+
+  return (jsonify({'summary': summary}), 200)
   
 @app.route('/get-audio', methods=["GET"])
 def get_audio():
