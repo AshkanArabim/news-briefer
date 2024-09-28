@@ -9,9 +9,7 @@ attrs==24.2.0
 beautifulsoup4==4.12.3
 blinker==1.8.2
 cachetools==5.5.0
-cachetools==5.5.0
 certifi==2024.8.30
-cffi==1.17.1
 cffi==1.17.1
 charset-normalizer==3.3.2
 click==8.1.7
@@ -58,6 +56,7 @@ sgmllib3k==1.0.0
 six==1.16.0
 sniffio==1.3.1
 soupsieve==2.6
+SQLAlchemy==2.0.35
 storage3==0.7.7
 StrEnum==0.4.15
 supafunc==0.5.1
