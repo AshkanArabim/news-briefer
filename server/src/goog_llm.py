@@ -50,4 +50,4 @@ def summarize_news(content):
 """ if __name__ == "__main__":
     print(summarize_news(parse_rss.get_top5_articles("https://www.cbsnews.com/latest/rss/politics"))) """
 
-goog_tts.text_to_wav("en-US-Standard-D", summarize_news("https://www.cbsnews.com/latest/rss/politics"))
+goog_tts.text_to_audio_stream("en-US-Standard-O", summarize_news("https://www.cbsnews.com/latest/rss/politics"))
