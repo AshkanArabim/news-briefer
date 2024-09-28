@@ -1,14 +1,16 @@
+/* Container for the login page */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('../public/background.jpg'); /* Replace with your image path */
+  background-image: url('../public/background.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
 }
 
+/* Login form styles */
 .login-form {
   width: 300px;
   padding: 20px;
@@ -17,6 +19,57 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Group the buttons together */
+.button-group {
+  display: flex;
+  flex-direction: column; /* Stack the buttons vertically */
+  justify-content: center; /* Center buttons horizontally */
+  align-items: center; /* Center buttons inside the group */
+  margin-bottom: 20px; /* Add some space below the buttons */
+}
+
+/* Home button style */
+.home-button {
+  width: 100%; /* Full width */
+  padding: 12px 20px;
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none; /* Remove link underline */
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 10px; /* Space between Home and Login buttons */
+}
+
+/* Hover effect for Home button */
+.home-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05); /* Slightly increase size */
+}
+
+/* Login button style */
+.login-button {
+  width: 100%; /* Full width */
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for Login button */
+.login-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Form group styling */
 .form-group {
   margin-bottom: 15px;
 }
@@ -27,22 +80,12 @@
   text-align: left;
 }
 
+/* Input field styling */
 .form-group input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
 }

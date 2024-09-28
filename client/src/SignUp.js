@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './SignUp.css';
+import './SignUp.css'; // Use the SignUp-specific CSS file
 
 function SignUp({ translations }) {
   const [email, setEmail] = useState('');
@@ -9,7 +9,6 @@ function SignUp({ translations }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // You can handle form submission logic here
     console.log('Email:', email);
     console.log('Password:', password);
     console.log('Confirm Password:', confirmPassword);
@@ -18,7 +17,7 @@ function SignUp({ translations }) {
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSubmit}>
-        <h2>{translations ? translations.signUpButton : 'Sign Up'}</h2> {/* Translated Heading */}
+        <h2>{translations ? translations.signUpButton : 'Sign Up'}</h2>
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -46,10 +45,18 @@ function SignUp({ translations }) {
             required
           />
         </div>
-        <button type="submit">{translations ? translations.signUpButton : 'Sign Up'}</button>
-        <p>
-          <Link to="/">{translations ? translations.homeTitle : 'Home'}</Link>
-        </p>
+
+        {/* Sign Up Button */}
+        <button type="submit" className="signup-button">
+          {translations ? translations.signUpButton : 'Sign Up'}
+        </button>
+
+        {/* Home Button below the Sign Up Button */}
+        <div className="home-button-container">
+          <Link to="/" className="home-button">
+            {translations.homeTitle}
+          </Link>
+        </div>
       </form>
     </div>
   );

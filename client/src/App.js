@@ -4,18 +4,16 @@ import Home from './Home';
 import Login from './Login';
 import SignUp from './SignUp';
 import Feed from './Feed';
+import Sources from './Sources'; // Import the Sources component
 import './App.css';
 
 function App() {
-  // Create state to manage the selected language
   const [language, setLanguage] = useState('en');
 
-  // Function to handle language changes
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
   };
 
-  // Define translations for each language
   const translations = {
     en: {
       homeTitle: 'Home',
@@ -23,6 +21,7 @@ function App() {
       loginButton: 'Login',
       signUpButton: 'Sign Up',
       feedButton: 'Feed',
+      sourcesButton: 'Sources',
       feedContent: 'Here is what is happening today:',
     },
     es: {
@@ -31,6 +30,7 @@ function App() {
       loginButton: 'Iniciar Sesión',
       signUpButton: 'Registrarse',
       feedButton: 'Noticias',
+      sourcesButton: 'Fuentes',
       feedContent: 'Aquí está lo que está pasando hoy:',
     },
     fr: {
@@ -39,6 +39,7 @@ function App() {
       loginButton: 'Connexion',
       signUpButton: "S'inscrire",
       feedButton: 'Fil',
+      sourcesButton: 'Sources',
       feedContent: 'Voici ce qui se passe aujourd’hui :',
     },
   };
@@ -46,7 +47,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Global Language Dropdown */}
         <div className="language-dropdown">
           <select onChange={handleLanguageChange} value={language} className="language-select">
             <option value="en">English</option>
@@ -55,12 +55,12 @@ function App() {
           </select>
         </div>
 
-        {/* Pass translations as a prop to each component */}
         <Routes>
           <Route path="/" element={<Home translations={translations[language]} />} />
           <Route path="/login" element={<Login translations={translations[language]} />} />
           <Route path="/signup" element={<SignUp translations={translations[language]} />} />
           <Route path="/feed" element={<Feed translations={translations[language]} />} />
+          <Route path="/sources" element={<Sources translations={translations[language]} />} /> {/* Add Sources Route */}
         </Routes>
       </div>
     </Router>

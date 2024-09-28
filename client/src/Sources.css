@@ -1,0 +1,114 @@
+/* Container for the Sources page */
+.sources-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('../public/background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Main text styles */
+.main-text {
+  text-align: center;
+  color: brown;
+  margin-bottom: 20px;
+}
+
+/* Container for the Home button */
+.button-container {
+  margin-top: 20px;
+}
+
+.home-button {
+  width: 150px;
+  padding: 12px 20px;
+  background-color: #5388b4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+}
+
+/* URL Management Section */
+.url-management {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.url-input {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* URL Buttons Container */
+.url-buttons {
+  display: flex;
+  gap: 10px; /* Add space between buttons */
+}
+
+/* Style for the URL buttons */
+.home-button {
+  width: 150px;              /* Consistent width */
+  padding: 12px 20px;        /* Consistent padding */
+  background-color: #5388b4; /* Background color matching the Home button */
+  color: white;              /* Ensure text is white */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.home-button:hover {
+  background-color: #0056b3; /* Hover effect for consistency */
+}
+
+/* URL list display */
+.url-list {
+  margin-top: 20px;
+}
+
+.url-list h2 {
+  color: #333;
+}
+
+.url-item {
+  font-size: 18px;
+  color: #333;
+  list-style: none;
+  padding: 5px 0;
+  display: flex; /* Align text and button horizontally */
+  justify-content: space-between;
+  width: 400px; /* Adjust width */
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Remove button styling */
+.remove-url-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 10px;
+}
+
+.remove-url-button:hover {
+  background-color: #c82333; /* Slightly darker red on hover */
+}

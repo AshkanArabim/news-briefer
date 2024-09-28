@@ -24,22 +24,29 @@
 .home-button {
   width: 200px;              /* Increased width */
   padding: 15px 30px;        /* Increased padding for a bigger button */
-  background-color: #5a8187;
+  background-color: #5a8187; /* Initial background color */
   color: white;
   border: none;
   border-radius: 16px;
   cursor: pointer;
   font-size: 20px;           /* Larger font size */
+  transition: all 0.3s ease; /* Smooth transition on all properties */
 }
 
+/* Style the subtitle */
 .home-subtitle {
   color: brown;
 }
 
+/* Hover effect for buttons */
 .home-button:hover {
-  background-color: #0056b3;
+  background-color: rgb(110, 63, 63) !important; /* Change the background color on hover */
+  color: #ffffff !important;            /* Change text color on hover */
+  border: 5px solid #ffffff;            /* Optional: add a border to see the effect */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
 }
 
+/* HTML and body styles */
 html, body {
   height: 100%;
   margin: 0;

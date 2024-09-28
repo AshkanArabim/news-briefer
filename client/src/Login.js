@@ -15,7 +15,15 @@ function Login({ translations }) {
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>{translations.loginButton}</h2>
+        {/* Updated Structure: Group Home and Login buttons */}
+        <div className="button-group">
+          {/* Home Button */}
+          <Link to="/" className="home-button">
+            {translations.homeTitle}
+          </Link>
+          
+        </div>
+
         <div className="form-group">
           <label>Email:</label>
           <input
@@ -33,11 +41,13 @@ function Login({ translations }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
+          {/* Login Button */}
+          <button type="submit" className="login-button">
+            {translations.loginButton}
+          </button>
         </div>
-        <button type="submit">{translations.loginButton}</button>
-        <p>
-          <Link to="/">{translations.homeTitle}</Link>
-        </p>
+        
       </form>
     </div>
   );

@@ -1,12 +1,16 @@
-/* src/SignUp.css */
+/* Container for the Sign Up page */
 .signup-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f7f7f7;
+  background-image: url('../public/background.jpg'); /* Optional: Add a background image */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
+/* Style for the Sign Up form */
 .signup-form {
   width: 300px;
   padding: 20px;
@@ -22,37 +26,59 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
+  text-align: left;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
   margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-button {
+/* Style for the Sign Up button */
+.signup-button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 12px 20px;
+  background-color: #007bff; /* Blue background */
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
+/* Hover effect for the Sign Up button */
+.signup-button:hover {
   background-color: #0056b3;
+  transform: scale(1.05); /* Slightly increase size */
 }
 
-.signup-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-image: url('../public/background.jpg'); /* Replace with your image path */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+/* Container for the Home button */
+.home-button-container {
+  margin-top: 15px; /* Add space above the home button */
+  text-align: center;
+}
+
+/* Style the Home button to match the Sign Up button */
+.home-button {
+  display: inline-block; /* Make it inline-block for better styling */
+  width: 100%; /* Full width of the form */
+  padding: 12px 20px; /* Adjust padding */
+  background-color: #007bff; /* Same color as Sign Up button */
+  color: white;
+  text-decoration: none; /* Remove underline */
+  border-radius: 4px;
+  text-align: center;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+}
+
+/* Hover effect for the Home button */
+.home-button:hover {
+  background-color: #0056b3; /* Darker shade of blue on hover */
+  transform: scale(1.05); /* Slightly increase size */
 }

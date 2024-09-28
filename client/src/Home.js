@@ -17,6 +17,10 @@ function Home({ translations }) {
         <Link to="/feed">
           <button className="home-button">{translations.feedButton}</button>
         </Link>
+        {/* New Sources button */}
+        <Link to="/sources">
+          <button className="home-button">{translations.sourcesButton}</button>
+        </Link>
       </div>
     </div>
   );
