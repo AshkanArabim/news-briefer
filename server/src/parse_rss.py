@@ -34,13 +34,13 @@ def get_article_content(article_url):
         return f"Failed to retrieve the article. Status code: {response.status_code}"
 
 
-def get_top5_articles(rss_url):
+def get_topn_articles(rss_url, n=5):
     # Fetch the RSS feed
     feed = feedparser.parse(rss_url)
 
     # Get the top 5 links and
     articles = []
-    for entry in feed.entries[:5]:
+    for entry in feed.entries[:n]:
         if (get_article_content(entry.link)) == "Could not find the article body.":
             continue
         articles.append(entry.title)
