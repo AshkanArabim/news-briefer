@@ -33,3 +33,5 @@ soupsieve==2.6
 urllib3==2.2.3
 Werkzeug==3.0.4
 zipp==3.20.2
+google-cloud-aiplatform==1.68.0
+vertexai==1.68.0
