@@ -66,7 +66,7 @@ def get_audio():
   if not check_auth(req_body):
     return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
   # link will be replaced by db query to sources
-  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+  headlines, text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
   summary = goog_llm.summarize_news(text)
 
   # goog_tts.text_to_wav("name of voice model", text to say)
