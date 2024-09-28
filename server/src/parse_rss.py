@@ -2,9 +2,15 @@ import requests
 import feedparser
 from bs4 import BeautifulSoup
 
+"""
+:param article_url: The URL of the article to fetch and parse
+:return: The main content of the article as a string, or an error message
+"""
+
 
 def get_article_content(article_url):
     # Make a GET request to fetch the article content
+
     response = requests.get(article_url)
 
     # Check if the request was successful
@@ -28,16 +34,22 @@ def get_article_content(article_url):
         return f"Failed to retrieve the article. Status code: {response.status_code}"
 
 
+def get_top5_articles(rss_url):
+    # Fetch the RSS feed
+    feed = feedparser.parse(rss_url)
+
+    # Get the top 5 links and
+    articles = []
+    for entry in feed.entries[:5]:
+        if (get_article_content(entry.link)) == "Could not find the article body.":
+            continue
+        articles.append(entry.title)
+        articles.append(get_article_content(entry.link))
+
+    return "\n\n".join(articles) if articles else "No articles found."
+
+
 if __name__ == "__main__":
     # Fetch the RSS feed
-    rss_url = 'https://www.cbsnews.com/latest/rss/main'
-    feed = feedparser.parse(rss_url)
-    # Get the first headline and its link
-    for entry in feed.entries[:1]:  # Get just one article for demo
-        article_url = entry.link
-        print(article_url)
-        print(f"Fetching article: {entry.title}")
-
-        # Fetch and display the article content
-        content = get_article_content(article_url)
-        print(content)
+    rss_url = 'https://www.cbsnews.com/latest/rss/politics'
+    print(get_top5_articles(rss_url))
