@@ -13,6 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # fetch environment variables
+STORY_PER_SOURCE_COUNT = 3
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 if DB_USERNAME == None or DB_PASSWORD == None:
@@ -58,7 +59,11 @@ def check_auth(req_body):
     return False
   try:
     decoded = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
-    return decoded.get('user') is not None
+    if decoded.get('user') is not None:
+      g.current_user = decoded["user"]
+      print(decoded["user"]) # DEBUG
+      return True
+    return False
   except jwt.InvalidTokenError:
     return False
   
@@ -105,6 +110,23 @@ def get_audio():
 
   voice_stream = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
   return voice_stream
+
+@app.route('/get-sources', methods=["GET"])
+def get_soruces():
+  req_body = request.json
+  if not check_auth(req_body):
+    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
+  
+  db = get_db()
+  cursor = db.cursor()
+  cursor.execute("select * from sources where user = " + g.current_user)
+  
+  results = cursor.fetchall() 
+  # ^^ returns a tuple: (<email>, <source>)
+  # ignoring the email field for now
+  
+  results = [src for _, src in results]
+  return jsonify({"sources": results})
 
 @app.route('/add-source', methods=["POST"])
 def add_source():

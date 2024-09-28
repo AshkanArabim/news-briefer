@@ -47,6 +47,6 @@ def summarize_news(content):
     output = model.generate_content(content)
     return output.text
 
-print(summarize_news(parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")))
+# print(summarize_news(parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics"))) # DEBUG
 
 
