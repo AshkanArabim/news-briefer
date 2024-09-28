@@ -1,0 +1,53 @@
+/* src/Home.css */
+.home-title {
+  color: #5a8187;
+  font-size: 48px;     /* Increased font size for heading */
+  margin-bottom: 30px; /* Add some space below the heading */
+}
+
+.home-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  height: 100vh;           /* Set the height to the full viewport */
+  flex-direction: column;  /* Stack elements vertically */
+}
+
+/* Container for buttons */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;  /* Add some space between buttons */
+}
+
+/* Style the buttons */
+.home-button {
+  width: 200px;              /* Increased width */
+  padding: 15px 30px;        /* Increased padding for a bigger button */
+  background-color: #5a8187;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 20px;           /* Larger font size */
+}
+
+.home-subtitle {
+  color: brown;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-image: url('../public/background.jpg'); /* Point to the image file in the public folder */
+  background-size: cover;                   /* Scale image to cover the full screen */
+  background-position: center;              /* Center the background image */
+  background-repeat: no-repeat;             /* Prevent repetition of the image */
+}
