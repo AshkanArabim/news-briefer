@@ -50,8 +50,18 @@ function Sources({ translations }) {
 	}, []);
 
 	// Handler for removing a specific URL from the list
-	const handleRemoveUrl = (index) => {
+	const handleRemoveUrl = async (index, url) => {
 		setUrlList(urlList.filter((_, i) => i !== index)); // Remove the URL at the specified index
+    
+    await fetch(`${BACKEND_URL}/remove-source/${store.getState().user.token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "source": url
+      })
+    });
 	};
 
 	return (
@@ -98,7 +108,7 @@ function Sources({ translations }) {
 						<li key={index} className="url-item">
 							{url}
 							{/* Remove button for each URL */}
-							<button className="home-button" onClick={() => handleRemoveUrl(index)}>
+							<button className="home-button" onClick={() => handleRemoveUrl(index, url)}>
 								Remove
 							</button>
 						</li>
