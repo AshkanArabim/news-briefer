@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import "./Login.css";
 import { store, setToken } from "./store";
 import { BACKEND_URL } from "./vars";
+import { useNavigate } from "react-router-dom";
 
 function Login({ translations }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+  const navigate = useNavigate()
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -23,6 +25,8 @@ function Login({ translations }) {
 		if (response.ok) {
 			store.dispatch(setToken(data.token));
       console.log("login successful.")
+
+      navigate("/")
 		} else {
 			// Handle error
 			console.error("Login failed:", data.message);
