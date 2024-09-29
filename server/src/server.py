@@ -194,7 +194,7 @@ def get_audio(token):
     elif g.current_user_language == "french":
         temp_audio_file_path = goog_tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
     else:
-        temp_audio_file_path = goog_tts.text_to_audio_stream("es-US-News-D", summary)
+        temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Standard-B", summary)
 
     return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 

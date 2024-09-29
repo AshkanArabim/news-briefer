@@ -20,16 +20,13 @@ def get_article_content(article_url):
 
         # Extract the main content of the article (this will vary depending on the website)
         # Here we assume the main content is inside a <div> with a specific class, adjust as needed
-        article_body = soup.find('section', class_='content__body')  # You need to inspect the HTML structure of the site
         # only grab text from <p> tags
 
         # Extract and clean the text
-        if article_body:
-            paragraphs = article_body.find_all('p')
-            article_text = '\n'.join([p.get_text(strip=True) for p in paragraphs])
-            return article_text
-        else:
-            return "Could not find the article body."
+        paragraphs = soup.find_all('p')
+        print(paragraphs) # DEBUG
+        article_text = '\n'.join([p.get_text(strip=True) for p in paragraphs])
+        return article_text
     else:
         return f"Failed to retrieve the article. Status code: {response.status_code}"
 
@@ -49,7 +46,7 @@ def get_topn_articles(rss_url, n=5):
     for entry in feed.entries:
         if len(articles) >= n:
             break
-        if (get_article_content(entry.link)) == "Could not find the article body.":
+        if (get_article_content(entry.link)) == "Could not find the article body.": # TODO: this is not needed
             continue
         articles.append(get_article_content(entry.link))
 
@@ -58,14 +55,19 @@ def get_topn_articles(rss_url, n=5):
 def get_topn_headlines(rss_url, n=5):
     # Fetch the RSS feed
     feed = feedparser.parse(rss_url)
-
-    # Get the top n links
-
+    
     headlines = []
+    counter = 0
     for entry in feed.entries:
+        if counter >= n:
+            break
+        counter += 1
+        
         if len(headlines) >= n:
             break
-        if (get_article_content(entry.link)) == "Could not find the article body.":
+        
+        print("about to get article content")
+        if (get_article_content(entry.link)) == "Could not find the article body.": # TODO: this is not needed
             continue
         headlines += [entry.title]
 

@@ -47,9 +47,11 @@ def summarize_news(content, lang="en"):
     # output: text output from model.generate_content
     # add support for spanish and french
     if lang == "es":
-        output = model.generate_content("Translate the following into spanish before executing your instructions" + content)
+        output = model.generate_content("Translate the following into Spanish before executing your instructions" + content)
     elif lang == "fr":
         output = model.generate_content("Translate the following into French before executing your instructions" + content)
+    else:
+        output = model.generate_content("Translate the following into English before executing your instructions" + content)
     return output.text
 
 # print(summarize_news(parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics"))) # DEBUG
