@@ -46,10 +46,13 @@ def get_topn_articles(rss_url, n=5):
 
     # Get the top 5 links and
     articles = []
-    for entry in feed.entries[:n]:
-        if (get_article_content(entry.link)) == "Could not find the article body.":
+    i = 0
+    while len(articles) < n:
+        if (get_article_content(feed[i].link)) == "Could not find the article body.":
+            i += 1
             continue
-        articles.append(get_article_content(entry.link))
+        articles.append(get_article_content(feed[i].link))
+        i += 1
 
     return "\n\n".join(articles) if articles else "No articles found."
 
@@ -60,10 +63,13 @@ def get_topn_headlines(rss_url, n=5):
     # Get the top n links
 
     headlines = []
-    for entry in feed.entries[:n]:
-        if (get_article_content(entry.link)) == "Could not find the article body.":
+    i=0
+    while len(headlines) < n:
+        if (get_article_content(feed[i].link)) == "Could not find the article body.":
+            i += 1
             continue
-        headlines += [entry.title]
+        headlines += [feed[i].title]
+        i += 1
 
     return headlines
 
