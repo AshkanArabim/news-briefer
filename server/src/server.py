@@ -191,7 +191,7 @@ def get_audio():
 
 
 @app.route("/get-sources", methods=["GET"])
-def get_soruces():
+def get_sources():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
@@ -213,7 +213,9 @@ def add_source():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-
+    test = parse_rss.get_topn_headlines(req_body["source"])
+    if len(test) == 0:
+        return jsonify({"message": "invalid rss feed."}), 400
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
