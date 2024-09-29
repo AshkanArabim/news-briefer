@@ -1,0 +1,17 @@
+meta {
+  name: get sources
+  type: http
+  seq: 4
+}
+
+get {
+  url: 127.0.0.1:5000/get-sources
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsIn0.k8pGi2fhpgPn2Nikn6J2C8XXFrpTbty4Eixsah18S4U"
+  }
+}
