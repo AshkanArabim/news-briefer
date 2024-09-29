@@ -5,7 +5,15 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:5000
-  body: none
+  url: http://127.0.0.1:5000/remove-source
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFzaGthbi5hcmFiaW1AZ21haWwuY29tIiwibGFuZyI6ImVuZ2xpc2gifQ.OJtVDyLaz02GncK8nzjVMO4mVR5SgEZia5e1A_xWpCg",
+    "source": "https://techcrunch.com/feed/"
+  }
+  
 }
