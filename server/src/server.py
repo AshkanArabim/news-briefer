@@ -72,15 +72,19 @@ def respond_invalid_auth():
 
 def respond_valid_auth():
     return jsonify({"message": RESPONSE_MESSAGES["valid_auth"]}), 200
+  
 
-
-def get_all_sources_summary():
+def get_user_sources():
     # query db to get user's sources (assuming they're all valid rss feeds)
     db = get_db()
     cursor = db.cursor()
     cursor.execute("select * from sources where email = %s", (g.current_user_email,))
     results = cursor.fetchall()
-    sources = [source for _, source in results]
+    return [source for _, source in results]
+
+
+def get_all_sources_summary():
+    sources = get_user_sources()
 
     # determine how many should be taken from each source
     items_per_src = MAX_STORIES // len(sources)
@@ -155,7 +159,24 @@ def get_text():
     summary = get_all_sources_summary()
 
     return (jsonify({"summary": summary}), 200)
+  
 
+@app.route("/get-headers", methods=['GET'])
+def get_headers():
+    req_body = request.json
+    if not check_auth(req_body):
+        return respond_invalid_auth()
+
+    sources = get_user_sources()
+
+    # determine how many should be taken from each source
+    items_per_src = MAX_STORIES // len(sources)
+
+    news_headlines = []
+    for source in sources:
+        news_headlines.extend(parse_rss.get_topn_headlines(source, items_per_src + 1))
+
+    return jsonify({"headlines": news_headlines})
 
 @app.route("/get-audio", methods=["GET"])
 def get_audio():
