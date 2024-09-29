@@ -60,6 +60,7 @@ def check_auth(req_body):
         )
         if decoded.get("email") is not None:
             g.current_user_email = decoded["email"]
+            g.current_user_language = decoded["lang"]
             return True
         return False
     except jwt.InvalidTokenError:
@@ -95,6 +96,11 @@ def get_all_sources_summary():
         news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
 
     text = "\n\n".join(news_stories)
+    # TODO: add language support for spanish and french
+    if g.current_user_language == "spanish":
+        return goog_llm.summarize_news(text, "es")
+    elif g.current_user_language == "french":
+        return goog_llm.summarize_news(text, "fr")
     return goog_llm.summarize_news(text)
 
 
@@ -183,9 +189,14 @@ def get_audio():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-
+    temp_audio_file_path = None
     summary = get_all_sources_summary()
-    temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
+    if g.current_user_language == "spanish":
+        temp_audio_file_path = goog_tts.text_to_audio_stream("es-US-News-D", summary)
+    elif g.current_user_language == "french":
+        temp_audio_file_path = goog_tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
+    else:
+        temp_audio_file_path = goog_tts.text_to_audio_stream("es-US-News-D", summary)
 
     return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 
