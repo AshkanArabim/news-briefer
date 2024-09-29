@@ -46,13 +46,12 @@ def get_topn_articles(rss_url, n=5):
 
     # Get the top 5 links and
     articles = []
-    i = 0
-    while len(articles) < n:
-        if (get_article_content(feed[i].link)) == "Could not find the article body.":
-            i += 1
+    for entry in feed.entries:
+        if len(articles) >= n:
+            break
+        if (get_article_content(entry.link)) == "Could not find the article body.":
             continue
-        articles.append(get_article_content(feed[i].link))
-        i += 1
+        articles.append(get_article_content(entry.link))
 
     return "\n\n".join(articles) if articles else "No articles found."
 
@@ -63,18 +62,18 @@ def get_topn_headlines(rss_url, n=5):
     # Get the top n links
 
     headlines = []
-    i=0
-    while len(headlines) < n:
-        if (get_article_content(feed[i].link)) == "Could not find the article body.":
-            i += 1
+    for entry in feed.entries:
+        if len(headlines) >= n:
+            break
+        if (get_article_content(entry.link)) == "Could not find the article body.":
             continue
-        headlines += [feed[i].title]
-        i += 1
+        headlines += [entry.title]
 
     return headlines
 
 
 if __name__ == "__main__":
     # Fetch the RSS feed
-    rss_url = 'https://www.cbsnews.com/latest/rss/politics'
+    rss_url = 'https://www.cbsnews.com/latest/rss/moneywatch'
     print(get_topn_articles(rss_url))
+    print(len(get_topn_headlines(rss_url)))
