@@ -52,8 +52,7 @@ RESPONSE_MESSAGES = {
 
 
 # helpers
-def check_auth(req_body):
-    token = req_body.get("token")
+def check_auth(token):
     if not token:
         return False
     try:
@@ -152,21 +151,19 @@ def signup():
     )
 
 
-@app.route("/get-text", methods=["GET"])
-def get_text():
-    req_body = request.json
-    if not check_auth(req_body):
+@app.route("/get-text/<token>", methods=["GET"])
+def get_text(token):
+    if not check_auth(token):
         return respond_invalid_auth()
 
     summary = get_all_sources_summary()
 
-    return (jsonify({"summary": summary}), 200)
-  
+    return jsonify({"summary": summary}), 200
 
-@app.route("/get-headers", methods=['GET'])
-def get_headers():
-    req_body = request.json
-    if not check_auth(req_body):
+
+@app.route("/get-headers/<token>", methods=['GET'])
+def get_headers(token):
+    if not check_auth(token):
         return respond_invalid_auth()
 
     sources = get_user_sources()
@@ -180,10 +177,9 @@ def get_headers():
 
     return jsonify({"headlines": news_headlines})
 
-@app.route("/get-audio", methods=["GET"])
-def get_audio():
-    req_body = request.json
-    if not check_auth(req_body):
+@app.route("/get-audio/<token>", methods=["GET"])
+def get_audio(token):
+    if not check_auth(token):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
     summary = get_all_sources_summary()
@@ -192,15 +188,14 @@ def get_audio():
     return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 
 
-@app.route("/get-sources", methods=["GET"])
-def get_soruces():
-    req_body = request.json
-    if not check_auth(req_body):
+@app.route("/get-sources/<token>", methods=["GET"])
+def get_sources(token):
+    if not check_auth(token):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("select * from sources where email = " + g.current_user_email)
+    cursor.execute("select * from sources where email = %s", (g.current_user_email,))
 
     results = cursor.fetchall()
     # ^^ returns a tuple: (<email>, <source>)
@@ -210,10 +205,10 @@ def get_soruces():
     return jsonify({"sources": results})
 
 
-@app.route("/add-source", methods=["POST"])
-def add_source():
+@app.route("/add-source/<token>", methods=["POST"])
+def add_source(token):
     req_body = request.json
-    if not check_auth(req_body):
+    if not check_auth(token):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
     db = get_db()
@@ -227,10 +222,10 @@ def add_source():
     return jsonify({"message": "source added successfully."})
 
 
-@app.route("/remove-source", methods=["POST"])
-def remove_source():
+@app.route("/remove-source/<token>", methods=["POST"])
+def remove_source(token):
     req_body = request.json
-    if not check_auth(req_body):
+    if not check_auth(token):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
     db = get_db()
