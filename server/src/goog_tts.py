@@ -22,13 +22,11 @@ def text_to_audio_stream(voice_name: str, text: str):
 
     # Define the voice parameters
     voice_params = tts.VoiceSelectionParams(
-        language_code=language_code, name= voice_name
+        language_code=language_code, name=voice_name
     )
 
     # Configure audio encoding as MP3 for streaming
     audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.MP3)
-
-    
 
     # Perform the text-to-speech request
     response = client.synthesize_speech(
@@ -37,6 +35,9 @@ def text_to_audio_stream(voice_name: str, text: str):
         audio_config=audio_config,
     )
     
-    # Play the audio directly from the byte stream
-    audio = AudioSegment.from_file(io.BytesIO(response.audio_content))
-    play(audio)
+    # Save the audio to a temporary file
+    temp_audio_file = "/tmp/temp_audio.mp3"
+    with open(temp_audio_file, "wb") as out:
+        out.write(response.audio_content)
+    
+    return temp_audio_file

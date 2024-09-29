@@ -13,135 +13,234 @@ load_dotenv()
 app = Flask(__name__)
 
 # fetch environment variables
-STORY_PER_SOURCE_COUNT = 3
+MAX_STORIES = 6
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 if DB_USERNAME == None or DB_PASSWORD == None:
     raise Exception("DB_USERNAME or DB_PASSWORD env vars not set!")
 
-# Database configuration
-app.config['DB_HOST'] = '127.0.0.1'
-app.config['DB_PORT'] = 5432
-app.config['DB_USER'] = DB_USERNAME
-app.config['DB_PASSWORD'] = DB_PASSWORD
-app.config['DB_NAME'] = 'news_briefer'
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = pg8000.connect(
-            host=app.config['DB_HOST'],
-            port=app.config['DB_PORT'],
-            user=app.config['DB_USER'],
-            password=app.config['DB_PASSWORD'],
-            database=app.config['DB_NAME']
+            host="127.0.0.1",
+            port=5432,
+            user=DB_USERNAME,
+            password=DB_PASSWORD,
+            database="news_briefer",
         )
     return g.db
 
+
 @app.teardown_appcontext
 def close_db(error):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
     if db is not None:
         db.close()
 
+
 if len(os.environ.get("JWT_SECRET_KEY")) == 0:
-  print("jwt secret key not found")
-  exit()
-  
+    print("jwt secret key not found")
+    exit()
+
 RESPONSE_MESSAGES = {
-  "invalid_auth": "Invalid authentication token!",
-  "valid_auth": "Token is valid. Welcome back!" # this is mostly for debugging
+    "invalid_auth": "Invalid authentication token!",
+    "valid_auth": "Token is valid. Welcome back!",  # this is mostly for debugging
 }
+
 
 # helpers
 def check_auth(req_body):
-  token = req_body.get('token')
-  if not token:
-    return False
-  try:
-    decoded = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
-    if decoded.get('email') is not None:
-      g.current_user_email = decoded["email"]
-      return True
-    return False
-  except jwt.InvalidTokenError:
-    return False
-  
+    token = req_body.get("token")
+    if not token:
+        return False
+    try:
+        decoded = jwt.decode(
+            token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"]
+        )
+        if decoded.get("email") is not None:
+            g.current_user_email = decoded["email"]
+            return True
+        return False
+    except jwt.InvalidTokenError:
+        return False
+
+
 def respond_invalid_auth():
-  return jsonify({'message': RESPONSE_MESSAGES["invalid_auth"]}), 401
+    return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]}), 401
+
 
 def respond_valid_auth():
-  return jsonify({'message': RESPONSE_MESSAGES["valid_auth"]}), 200
+    return jsonify({"message": RESPONSE_MESSAGES["valid_auth"]}), 200
+  
+
+def get_user_sources():
+    # query db to get user's sources (assuming they're all valid rss feeds)
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("select * from sources where email = %s", (g.current_user_email,))
+    results = cursor.fetchall()
+    return [source for _, source in results]
+
+
+def get_all_sources_summary():
+    sources = get_user_sources()
+
+    # determine how many should be taken from each source
+    items_per_src = MAX_STORIES // len(sources)
+
+    news_stories = []
+    for source in sources:
+        # n param = number of articles to summarize, default is 5 articles
+        news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
+
+    text = "\n\n".join(news_stories)
+    return goog_llm.summarize_news(text)
+
 
 # API endpoints
 # TODO: make login generate a random RSA token
-@app.route('/login', methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
-  req_body = request.json
-  # TODO: do a lookup in mongodb, this is hardcoded
-  if req_body and req_body['email'] == 'email' and req_body['password'] == 'pass':
-    token = jwt.encode({'email': req_body['email']}, os.environ.get("JWT_SECRET_KEY"))
-    return jsonify({'token': token})
-  return jsonify({'message': 'Invalid credentials'}), 401
+    req_body = request.json
+    db = get_db()
+    cursor = db.cursor()
+    results = cursor.execute(
+        "select * from users where email = %s and password = %s",
+        (req_body["email"], req_body["password"]),
+    )
+    results = [r for r in results]
+    email, password, lang = results[0] if len(results) > 0 else (None, None, None)
 
-@app.route('/get-text', methods=["GET"])
+    if email != None:
+        token = jwt.encode(
+            {"email": email, "lang": lang}, os.environ.get("JWT_SECRET_KEY")
+        )
+        return jsonify({"token": token})
+
+    return jsonify({"message": "Invalid credentials"}), 401
+
+
+@app.route("/signup", methods=["POST"])
+def signup():
+    req_body = request.json
+    db = get_db()
+    cursor = db.cursor()
+
+    # check if user exists
+    cursor.execute("select * from users where email = %s", (req_body["email"],))
+    existing_user = cursor.fetchone()
+    if existing_user is not None:
+        return (
+            jsonify(
+                {"message": "account with that email already exists! please log in."}
+            ),
+            409,
+        )
+
+    # create the user
+    cursor.execute(
+        "insert into users (email, password, lang) values (%s, %s, %s)",
+        (req_body["email"], req_body["password"], req_body["lang"]),
+    )
+    db.commit()
+
+    return jsonify(
+        {"message": "user created successfully. log in with your credentials"}
+    )
+
+
+@app.route("/get-text", methods=["GET"])
 def get_text():
-  req_body = request.json
-  if not check_auth(req_body):
-    return respond_invalid_auth()
-  # link will be replaced by db query to sources
-  # n param = number of articles to summarize, default is 5 articles
-  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
-  summary = goog_llm.summarize_news(text)
+    req_body = request.json
+    if not check_auth(req_body):
+        return respond_invalid_auth()
 
-  return (jsonify({'summary': summary}), 200)
+    summary = get_all_sources_summary()
+
+    return (jsonify({"summary": summary}), 200)
   
-@app.route('/get-audio', methods=["GET"])
+
+@app.route("/get-headers", methods=['GET'])
+def get_headers():
+    req_body = request.json
+    if not check_auth(req_body):
+        return respond_invalid_auth()
+
+    sources = get_user_sources()
+
+    # determine how many should be taken from each source
+    items_per_src = MAX_STORIES // len(sources)
+
+    news_headlines = []
+    for source in sources:
+        news_headlines.extend(parse_rss.get_topn_headlines(source, items_per_src + 1))
+
+    return jsonify({"headlines": news_headlines})
+
+@app.route("/get-audio", methods=["GET"])
 def get_audio():
-  req_body = request.json
-  if not check_auth(req_body):
-    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
-  # link will be replaced by db query to sources
-  text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
-  summary = goog_llm.summarize_news(text)
+    req_body = request.json
+    if not check_auth(req_body):
+        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
-  # goog_tts.text_to_wav("name of voice model", text to say)
-  # some voice models: en-US-Studio-O, fr-FR-Neural2-A.wav, es-ES-Standard-B
+    summary = get_all_sources_summary()
+    temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
 
-  voice_stream = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
-  return voice_stream
+    return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 
-@app.route('/get-sources', methods=["GET"])
+
+@app.route("/get-sources", methods=["GET"])
 def get_soruces():
-  req_body = request.json
-  if not check_auth(req_body):
-    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
-  
-  db = get_db()
-  cursor = db.cursor()
-  cursor.execute("select * from sources where email = " + g.current_user_email)
-  
-  results = cursor.fetchall() 
-  # ^^ returns a tuple: (<email>, <source>)
-  # ignoring the email field for now
-  
-  results = [src for _, src in results]
-  return jsonify({"sources": results})
+    req_body = request.json
+    if not check_auth(req_body):
+        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
-@app.route('/add-source', methods=["POST"])
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("select * from sources where email = " + g.current_user_email)
+
+    results = cursor.fetchall()
+    # ^^ returns a tuple: (<email>, <source>)
+    # ignoring the email field for now
+
+    results = [src for _, src in results]
+    return jsonify({"sources": results})
+
+
+@app.route("/add-source", methods=["POST"])
 def add_source():
-  req_body = request.json
-  if not check_auth(req_body):
-    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
-  # TODO: add to db
-  return respond_valid_auth()
+    req_body = request.json
+    if not check_auth(req_body):
+        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
-@app.route('/remove-source', methods=["POST"])
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "insert into sources values (%s, %s)",
+        (g.current_user_email, req_body["source"]),
+    )
+    db.commit()
+
+    return jsonify({"message": "source added successfully."})
+
+
+@app.route("/remove-source", methods=["POST"])
 def remove_source():
-  req_body = request.json
-  if not check_auth(req_body):
-    return jsonify({'message': RESPONSE_MESSAGES['invalid_auth']})
-  # TODO: remove source from db by its id?
-  return respond_valid_auth()
+    req_body = request.json
+    if not check_auth(req_body):
+        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
 
-if __name__ == '__main__':
-  app.run(debug=True) # TODO: remove in prod
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "delete from sources where url = %s and email = %s",
+        (req_body["source"], g.current_user_email),
+    )
+    db.commit()
+
+    return jsonify({"message": f"source {req_body['source']} removed from database."})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)  # TODO: remove in prod
