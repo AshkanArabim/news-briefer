@@ -74,6 +74,29 @@ def respond_valid_auth():
     return jsonify({"message": RESPONSE_MESSAGES["valid_auth"]}), 200
 
 
+def get_all_sources_summary():
+    # query db to get user's sources (assuming they're all valid rss feeds)
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+      "select * from sources where email = %s",
+      (g.current_user_email,)
+    )
+    results = cursor.fetchall()
+    sources = [source for _, source in results]
+    
+    # determine how many should be taken from each source
+    items_per_src = MAX_STORIES // len(sources)
+    
+    news_stories = []
+    for source in sources:
+      # n param = number of articles to summarize, default is 5 articles
+      news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
+
+    text = "\n\n".join(news_stories)
+    return goog_llm.summarize_news(text)
+
+
 # API endpoints
 # TODO: make login generate a random RSA token
 @app.route("/login", methods=["POST"])
@@ -103,27 +126,8 @@ def get_text():
     req_body = request.json
     if not check_auth(req_body):
         return respond_invalid_auth()
-    
-    # query db to get user's sources (assuming they're all valid rss feeds)
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-      "select * from sources where email = %s",
-      (g.current_user_email,)
-    )
-    results = cursor.fetchall()
-    sources = [source for _, source in results]
-    
-    # determine how many should be taken from each source
-    items_per_src = MAX_STORIES // len(sources)
-    
-    news_stories = []
-    for source in sources:
-      # n param = number of articles to summarize, default is 5 articles
-      news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
 
-    text = "\n\n".join(news_stories)
-    summary = goog_llm.summarize_news(text)
+    summary = get_all_sources_summary()
 
     return (jsonify({"summary": summary}), 200)
 
@@ -133,15 +137,11 @@ def get_audio():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-    # link will be replaced by db query to sources
-    text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
-    summary = goog_llm.summarize_news(text)
 
-    # goog_tts.text_to_wav("name of voice model", text to say)
-    # some voice models: en-US-Studio-O, fr-FR-Neural2-A.wav, es-ES-Standard-B
+    summary = get_all_sources_summary()
+    temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
 
-    voice_stream = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
-    return voice_stream
+    return flask.send_file(temp_audio_file_path, mimetype='audio/mpeg')
 
 
 @app.route("/get-sources", methods=["GET"])
