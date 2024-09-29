@@ -190,9 +190,16 @@ def add_source():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-    # TODO: add to db
-    return respond_valid_auth()
 
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+      "insert into sources values (%s, %s)",
+      (g.current_user_email, req_body["source"])
+    )
+    db.commit()
+    
+    return jsonify({"message": "source added successfully."})
 
 @app.route("/remove-source", methods=["POST"])
 def remove_source():
