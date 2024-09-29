@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SignUp.css';
-
-const apiUrl = 'http://127.0.0.1:5000/login';
+import { BACKEND_URL } from "./vars"
+import store from "./store"
 
 function SignUp({ translations }) {
   const [email, setEmail] = useState('');
@@ -21,8 +21,6 @@ function SignUp({ translations }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log('Form Data on Submit:', formData); // Log the formData here
-
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
       return;
@@ -31,13 +29,14 @@ function SignUp({ translations }) {
     // Create a single object for user credentials
     const userObject = {
       email: email,
-      password: password
+      password: password,
+      lang: "english" // TODO: integrate with dropdown
     };
 
     console.log('User Object:', JSON.stringify(userObject));
 
     // Make a POST request
-    fetch(apiUrl, {
+    fetch(BACKEND_URL + "/signup", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +52,7 @@ function SignUp({ translations }) {
       })
       .then((data) => {
         console.log('Success Data:', data); 
-        setMessage('Signup successful!');
+        setMessage('Signup successful! Use your credentials to sign in.');
       })
       .catch((error) => {
         console.error('Fetch Error:', error);

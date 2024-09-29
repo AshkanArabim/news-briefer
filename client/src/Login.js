@@ -26,8 +26,6 @@ function Login({ translations }) {
 			// Handle error
 			console.error("Login failed:", data.message);
 		}
-
-		console.log(store.getState()); // DEBUG
 	};
 
 	return (
