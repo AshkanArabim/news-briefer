@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Sources.css'; // Import Sources-specific styles
+import store from "./store"
+import { BACKEND_URL } from './vars';
 
 function Sources({ translations }) {
   const [urlList, setUrlList] = useState([]); // State to manage URLs
   const [inputValue, setInputValue] = useState(''); // State for the input field
 
   // Handler for adding a new URL
-  const handleAddUrl = () => {
+  const handleAddUrl = async () => {
     if (inputValue.trim()) {
       setUrlList([...urlList, inputValue]); // Add the new URL to the list
+      
+      // add to the backend database
+      await fetch(`${BACKEND_URL}/add-source`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: store.getState().user.token,
+          source: inputValue.trim()
+        })
+      })
+      
       setInputValue(''); // Clear the input field
     }
   };

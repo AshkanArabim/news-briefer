@@ -22,6 +22,7 @@ function Login({ translations }) {
 		const data = await response.json();
 		if (response.ok) {
 			store.dispatch(setToken(data.token));
+      console.log("login successful.")
 		} else {
 			// Handle error
 			console.error("Login failed:", data.message);
