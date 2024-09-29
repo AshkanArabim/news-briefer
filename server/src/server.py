@@ -102,7 +102,6 @@ def get_all_sources_summary():
 @app.route("/login", methods=["POST"])
 def login():
     req_body = request.json
-    # TODO: do a lookup in mongodb, this is hardcoded
     db = get_db()
     cursor = db.cursor()
     results = cursor.execute(
@@ -121,6 +120,30 @@ def login():
     return jsonify({"message": "Invalid credentials"}), 401
 
 
+@app.route("/signup", methods=["POST"])
+def signup():
+  req_body = request.json
+  db = get_db()
+  cursor = db.cursor()
+  
+  # check if user exists
+  cursor.execute(
+    "select * from users where email = %s",
+    (req_body["email"],)
+  )
+  existing_user = cursor.fetchone()
+  if existing_user is not None:
+    return jsonify({"message": "account with that email already exists! please log in."}), 409
+
+  # create the user
+  cursor.execute(
+    "insert into users (email, password, lang) values (%s, %s, %s)",
+    (req_body["email"], req_body["password"], req_body["lang"])
+  )
+  db.commit()
+  
+  return jsonify({"message": "user created successfully. log in with your credentials"})
+    
 @app.route("/get-text", methods=["GET"])
 def get_text():
     req_body = request.json
