@@ -3,6 +3,9 @@
   - set up gloud auth: https://cloud.google.com/sdk/gcloud/reference/auth
     - install it if you don't have it: https://cloud.google.com/sdk/docs/install
   - select the google cloud project: `gcloud config set project calcium-petal-437012-u5`
+  - run `gcloud init`
+  - run `gcloud auth application-default login`
+  - `./cloud-sql-proxy calcium-petal-437012-u5:us-central1:news-briefer-db`
   - connect to google cloud with [the cloud sql proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy)
   - connect to the local port of the sql database proxy 
     - should default to `127.0.0.1` for the host and `5432` for the port.
