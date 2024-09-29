@@ -12,6 +12,7 @@
     - the connection string is 
 - install gcloud
     - https://cloud.google.com/sdk/docs/install
+- IF you want to directly modify the database, use `psql -h 127.0.0.1 -p 5432 postgres api_handler`
 - `cd` to `server`, nothing more, nothing less.
 - `python -m venv server-env`
 - (assuming you're on MacOS or Linux) `source ./server-env/bin/activate`
