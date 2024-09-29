@@ -14,13 +14,12 @@ function Sources({ translations }) {
 			setUrlList([...urlList, inputValue]); // Add the new URL to the list
 
 			// add to the backend database
-			await fetch(`${BACKEND_URL}/add-source`, {
+			await fetch(`${BACKEND_URL}/add-source/${store.getState().user.token}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					token: store.getState().user.token,
 					source: inputValue.trim(),
 				}),
 			});
