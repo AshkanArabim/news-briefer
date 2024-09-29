@@ -78,20 +78,17 @@ def get_all_sources_summary():
     # query db to get user's sources (assuming they're all valid rss feeds)
     db = get_db()
     cursor = db.cursor()
-    cursor.execute(
-      "select * from sources where email = %s",
-      (g.current_user_email,)
-    )
+    cursor.execute("select * from sources where email = %s", (g.current_user_email,))
     results = cursor.fetchall()
     sources = [source for _, source in results]
-    
+
     # determine how many should be taken from each source
     items_per_src = MAX_STORIES // len(sources)
-    
+
     news_stories = []
     for source in sources:
-      # n param = number of articles to summarize, default is 5 articles
-      news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
+        # n param = number of articles to summarize, default is 5 articles
+        news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
 
     text = "\n\n".join(news_stories)
     return goog_llm.summarize_news(text)
@@ -122,28 +119,33 @@ def login():
 
 @app.route("/signup", methods=["POST"])
 def signup():
-  req_body = request.json
-  db = get_db()
-  cursor = db.cursor()
-  
-  # check if user exists
-  cursor.execute(
-    "select * from users where email = %s",
-    (req_body["email"],)
-  )
-  existing_user = cursor.fetchone()
-  if existing_user is not None:
-    return jsonify({"message": "account with that email already exists! please log in."}), 409
+    req_body = request.json
+    db = get_db()
+    cursor = db.cursor()
 
-  # create the user
-  cursor.execute(
-    "insert into users (email, password, lang) values (%s, %s, %s)",
-    (req_body["email"], req_body["password"], req_body["lang"])
-  )
-  db.commit()
-  
-  return jsonify({"message": "user created successfully. log in with your credentials"})
-    
+    # check if user exists
+    cursor.execute("select * from users where email = %s", (req_body["email"],))
+    existing_user = cursor.fetchone()
+    if existing_user is not None:
+        return (
+            jsonify(
+                {"message": "account with that email already exists! please log in."}
+            ),
+            409,
+        )
+
+    # create the user
+    cursor.execute(
+        "insert into users (email, password, lang) values (%s, %s, %s)",
+        (req_body["email"], req_body["password"], req_body["lang"]),
+    )
+    db.commit()
+
+    return jsonify(
+        {"message": "user created successfully. log in with your credentials"}
+    )
+
+
 @app.route("/get-text", methods=["GET"])
 def get_text():
     req_body = request.json
@@ -164,7 +166,7 @@ def get_audio():
     summary = get_all_sources_summary()
     temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Studio-O", summary)
 
-    return flask.send_file(temp_audio_file_path, mimetype='audio/mpeg')
+    return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 
 
 @app.route("/get-sources", methods=["GET"])
@@ -194,20 +196,29 @@ def add_source():
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
-      "insert into sources values (%s, %s)",
-      (g.current_user_email, req_body["source"])
+        "insert into sources values (%s, %s)",
+        (g.current_user_email, req_body["source"]),
     )
     db.commit()
-    
+
     return jsonify({"message": "source added successfully."})
+
 
 @app.route("/remove-source", methods=["POST"])
 def remove_source():
     req_body = request.json
     if not check_auth(req_body):
         return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-    # TODO: remove source from db by its id?
-    return respond_valid_auth()
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+        "delete from sources where url = %s and email = %s",
+        (req_body["source"], g.current_user_email),
+    )
+    db.commit()
+
+    return jsonify({"message": f"source {req_body['source']} removed from database."})
 
 
 if __name__ == "__main__":
