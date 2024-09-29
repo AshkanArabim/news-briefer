@@ -13,7 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # fetch environment variables
-STORY_PER_SOURCE_COUNT = 3
+MAX_STORIES = 6
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 if DB_USERNAME == None or DB_PASSWORD == None:
@@ -103,9 +103,26 @@ def get_text():
     req_body = request.json
     if not check_auth(req_body):
         return respond_invalid_auth()
-    # link will be replaced by db query to sources
-    # n param = number of articles to summarize, default is 5 articles
-    text = parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics")
+    
+    # query db to get user's sources (assuming they're all valid rss feeds)
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute(
+      "select * from sources where email = %s",
+      (g.current_user_email,)
+    )
+    results = cursor.fetchall()
+    sources = [source for _, source in results]
+    
+    # determine how many should be taken from each source
+    items_per_src = MAX_STORIES // len(sources)
+    
+    news_stories = []
+    for source in sources:
+      # n param = number of articles to summarize, default is 5 articles
+      news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
+
+    text = "\n\n".join(news_stories)
     summary = goog_llm.summarize_news(text)
 
     return (jsonify({"summary": summary}), 200)
