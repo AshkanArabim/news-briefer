@@ -11,7 +11,7 @@
 /* Container for the Feed page */
 .feed-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   height: 100vh;
@@ -51,7 +51,7 @@
   animation: fadeIn 1.2s ease-in-out; /* Add fade-in animation for the background */
   font-size: 36px;
   color: brown;
-  margin-top: -750px; /* Add some space below the Home button */
+  margin-top: 100px; /* Add some space below the Home button */
 }
 
 /* Container for text and icon */

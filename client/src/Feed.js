@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Feed.css';
 
+
 function Feed({ translations }) {
   // Function to show an alert when the icon is clicked
   const handleIconClick = () => {
