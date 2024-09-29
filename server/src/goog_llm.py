@@ -22,6 +22,7 @@ vertexai.init(project=PROJECT_ID, location="us-central1")
 model = GenerativeModel(
     model_name = "gemini-1.5-flash-002",
     system_instruction = [
+        "if you see the word 'translate', translate the following text into the language specified before executing your instructions, you entire output should be in the language specified",
         "You are a news briefing assistant",
         "Your task is to take one or more articles as an input and generate a short daily news brief per article given that captures the main points of said article.",
         "Keep the summary short, around 3-4 sentences, and focus on the key information provided.",
@@ -40,11 +41,15 @@ model = GenerativeModel(
 :param content: The content to summarize
 :return: The generated summary
 """
-def summarize_news(content):
+def summarize_news(content, lang="en"):
     # input: text output from parse_rss.get_top5_articles
     # content = parse_rss.get_top5_articles("https://www.cbsnews.com/latest/rss/politics")
     # output: text output from model.generate_content
-    output = model.generate_content(content)
+    # add support for spanish and french
+    if lang == "es":
+        output = model.generate_content("Translate the following into spanish before executing your instructions" + content)
+    elif lang == "fr":
+        output = model.generate_content("Translate the following into French before executing your instructions" + content)
     return output.text
 
 # print(summarize_news(parse_rss.get_topn_articles("https://www.cbsnews.com/latest/rss/politics"))) # DEBUG
