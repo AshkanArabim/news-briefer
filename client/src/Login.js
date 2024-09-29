@@ -12,6 +12,10 @@ function Login({ translations }) {
     console.log('Password:', password);
   };
 
+
+  
+
+
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
