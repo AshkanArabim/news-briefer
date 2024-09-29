@@ -19,6 +19,7 @@ deprecation==2.1.0
 docstring_parser==0.16
 feedparser==6.0.11
 Flask==3.0.3
+Flask-Cors==5.0.0
 Flask-SQLAlchemy==3.1.1
 frozenlist==1.4.1
 google-api-core==2.20.0

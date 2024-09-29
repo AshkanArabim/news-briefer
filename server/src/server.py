@@ -12,6 +12,7 @@ import pg8000
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 # fetch environment variables
 MAX_STORIES = 6
