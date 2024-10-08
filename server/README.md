@@ -14,3 +14,5 @@
 - connect to the local port of the sql database proxy 
   - should default to `127.0.0.1` for the host and `5432` for the port.
 - IF you want to directly modify the database, use `psql -h 127.0.0.1 -p 5432 postgres api_handler`
+- add the `.env` file under the `server` directory
+  - should contain: `JWT_SECRET_KEY`, `DB_CONN_STR`, `DB_USERNAME`, `DB_PASSWORD`, `LLM_API_KEY`, `TTS_API_KEY`
