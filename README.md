@@ -3,8 +3,9 @@
 
 Are you a fan of daily news briefings, but wish you had a wider selection of
 sources? Say no more! Newsbridge is a simple app that allows you to add your
-sources as RSS feeds, and then delivers the top stories rom all sources (**
-regardless of the source language**) on demand as a 5-6 minute audio briefing.
+sources as RSS feeds, and then delivers the top stories rom all sources 
+(**regardless of the source language**) on demand as a 5-6 minute audio 
+briefing.
 
 ## Roadmap
 - [ ] public hosting
