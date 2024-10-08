@@ -1,20 +1,16 @@
 # setup
-- start a proxy to google cloud's sql database:
-  - set up gloud auth: https://cloud.google.com/sdk/gcloud/reference/auth
-    - install it if you don't have it: https://cloud.google.com/sdk/docs/install
-  - select the google cloud project: `gcloud config set project calcium-petal-437012-u5`
-  - run `gcloud init`
-  - run `gcloud auth application-default login`
-  - `./cloud-sql-proxy calcium-petal-437012-u5:us-central1:news-briefer-db`
-  - connect to google cloud with [the cloud sql proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy)
-  - connect to the local port of the sql database proxy 
-    - should default to `127.0.0.1` for the host and `5432` for the port.
-    - the connection string is 
-- install gcloud
-    - https://cloud.google.com/sdk/docs/install
-- IF you want to directly modify the database, use `psql -h 127.0.0.1 -p 5432 postgres api_handler`
 - `cd` to `server`, nothing more, nothing less.
-- `python -m venv server-env`
 - (assuming you're on MacOS or Linux) `source ./server-env/bin/activate`
 - `pip install -r requirements.txt`
-- whenever you install something new, `pip freeze > requirements.txt` before pushing
+- **NOTE:** whenever you install something new, `pip freeze > requirements.txt` before pushing
+- `python -m venv server-env`
+- set up gcloud auth: https://cloud.google.com/sdk/gcloud/reference/auth
+  - install it if you don't have it: https://cloud.google.com/sdk/docs/install
+- select the google cloud project: `gcloud config set project calcium-petal-437012-u5`
+- run `gcloud init`
+- run `gcloud auth application-default login`
+- get [the cloud sql proxy](https://github.com/GoogleCloudPlatform/cloud-sql-proxy)
+- `./cloud-sql-proxy calcium-petal-437012-u5:us-central1:news-briefer-db`
+- connect to the local port of the sql database proxy 
+  - should default to `127.0.0.1` for the host and `5432` for the port.
+- IF you want to directly modify the database, use `psql -h 127.0.0.1 -p 5432 postgres api_handler`
