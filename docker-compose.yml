@@ -1,0 +1,18 @@
+services:
+  db:
+    build: ./db
+    environment:
+      # src: https://stackoverflow.com/a/26599273/14751074
+      - POSTGRES_USER=api_handler
+      - POSTGRES_PASSWORD=temp # TODO: security risk
+      - POSTGRES_DB=news_briefer # TODO: ugly names. change later
+    ports:
+      - 5432:5432
+    volumes:
+      - db_vol:/var/lib/postgresql/data
+  # frontend:
+  # server:
+  # tts:
+  # llm:
+volumes:
+  db_vol:
