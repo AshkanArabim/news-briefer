@@ -10,7 +10,10 @@ services:
       - 5432:5432
     volumes:
       - db_vol:/var/lib/postgresql/data
-  # frontend:
+  client:
+    build: ./client
+    ports:
+      - 3000:3000
   # server:
   # tts:
   # llm:
