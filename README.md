@@ -21,6 +21,14 @@ briefing.
 - [ ] Google OAuth integration
 - [ ] optional ads (for funding, if demand is high)
 
+## Usage
+- Install Docker
+- Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
+- Clone this repo and `cd` into it
+- `docker build --no-cache` - Just to make sure we're not using outdated images
+- `docker compose up -d`
+- Open http://localhost:3000 in your browser.
+
 ## Contributing
 Please open a pull request first, then ask to be assigned to it. We don't want
 to be stepping on each other's toes while the project is under heavy 
