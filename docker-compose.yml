@@ -22,8 +22,9 @@ services:
 
   tts:
     image: ghcr.io/coqui-ai/tts
-    ports:
-      - 5002:5002
+    # expose these ports for debugging
+    # ports:
+    #   - 5002:5002
     deploy:
       resources:
         reservations:
