@@ -14,8 +14,36 @@ services:
     build: ./client
     ports:
       - 3000:3000
+  
   # server:
+  #   build: ./server
+  #   ports:
+  #     - 5000:5000
+
   # tts:
-  # llm:
+
+  # equivalent of `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
+  # https://stackoverflow.com/questions/78500319/how-to-pull-model-automatically-with-container-creation
+  # https://github.com/valiantlynx/ollama-docker/blob/main/docker-compose-ollama-gpu.yaml
+  llm:
+    image: ollama/ollama:latest 
+    # expose these ports for debugging
+    # ports: 
+    #   - 11434:11434
+    volumes:
+      - llm_vol:/root/.ollama
+      - ./llm/entrypoint.sh:/entrypoint.sh
+    environment:
+      - MODEL_NAME=llama3.2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    
 volumes:
   db_vol:
+  llm_vol:
