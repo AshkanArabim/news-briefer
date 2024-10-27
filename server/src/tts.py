@@ -1,27 +1,24 @@
-import parse_rss
-import server.src.tts as tts
-from server.src.llm import summarize_news
-from vertexai.generative_models import GenerativeModel
+import os
+import requests
 
-if __name__ == "__main__":
-    # Fetch the RSS feed
-    rss_url = 'https://www.cbsnews.com/latest/rss/politics'
-    summarized_output = summarize_news(parse_rss.get_topn_articles(rss_url))
-	
-    # Save the summarized output to a .txt file
-    with open("summarized_output.txt", "w") as file:
-        file.write(summarized_output)
-	
-	# Split the summarized output into individual articles
-    articles = summarized_output.split("the next article is from")
-
-	# Convert each article to audio
-    first_article = True
-    for article in articles:
-        if article.strip():
-            # Skip the first "the next article is from" in the list
-            if not first_article and not article.startswith("The next article is from"):
-                article = "The next article is from" + article
-            first_article = False
-            print(article)
-            tts.text_to_audio_stream("en-US-Studio-O", article)
+def text_to_audio_file(language: str, text: str):
+    TTS_SERVER = os.environ.get("TTS_SERVER")
+    
+    url = f'http://{TTS_SERVER}/api/tts'
+    params = {
+        'text': text,
+        'speaker_id': 'p376',
+        'style_wav': '',
+        'language_id': language
+    }
+    response = requests.get(url, params=params)
+    
+    if response.status_code != 200:
+        raise Exception(f"Error: {response.status_code}, {response.text}")
+    
+    # Save the audio to a temporary file
+    temp_audio_file = "/tmp/temp_audio.mp3"
+    with open(temp_audio_file, "wb") as out:
+        out.write(response.content)
+    
+    return temp_audio_file

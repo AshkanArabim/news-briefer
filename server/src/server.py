@@ -192,11 +192,11 @@ def get_audio(token):
     temp_audio_file_path = None
     summary = get_all_sources_summary()
     if g.current_user_language == "spanish":
-        temp_audio_file_path = tts.text_to_audio_stream("es-US-News-D", summary)
+        temp_audio_file_path = tts.text_to_audio_file("es-US-News-D", summary)
     elif g.current_user_language == "french":
-        temp_audio_file_path = tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
+        temp_audio_file_path = tts.text_to_audio_file("fr-FR-Neural2-A", summary)
     else:
-        temp_audio_file_path = tts.text_to_audio_stream("en-US-Standard-B", summary)
+        temp_audio_file_path = tts.text_to_audio_file("en-US-Standard-B", summary)
 
     return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 

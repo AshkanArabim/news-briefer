@@ -37,6 +37,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: all
               capabilities: [gpu]
     entrypoint: ["python3", "TTS/server/server.py", "--model_name", "tts_models/en/vctk/vits", "--use_cuda", "true"]
 
