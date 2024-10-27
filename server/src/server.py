@@ -4,9 +4,11 @@ from flask import Flask, g, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+import pg8000
+
 import parse_rss
-import goog_llm
-import goog_tts
+import llm
+import tts
 import pg8000
 
 load_dotenv()
@@ -99,10 +101,10 @@ def get_all_sources_summary():
     text = "\n\n".join(news_stories)
     # TODO: add language support for spanish and french
     if g.current_user_language == "spanish":
-        return goog_llm.summarize_news(text, "es")
+        return llm.summarize_news(text, "es")
     elif g.current_user_language == "french":
-        return goog_llm.summarize_news(text, "fr")
-    return goog_llm.summarize_news(text)
+        return llm.summarize_news(text, "fr")
+    return llm.summarize_news(text)
 
 
 # API endpoints
@@ -190,11 +192,11 @@ def get_audio(token):
     temp_audio_file_path = None
     summary = get_all_sources_summary()
     if g.current_user_language == "spanish":
-        temp_audio_file_path = goog_tts.text_to_audio_stream("es-US-News-D", summary)
+        temp_audio_file_path = tts.text_to_audio_stream("es-US-News-D", summary)
     elif g.current_user_language == "french":
-        temp_audio_file_path = goog_tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
+        temp_audio_file_path = tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
     else:
-        temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Standard-B", summary)
+        temp_audio_file_path = tts.text_to_audio_stream("en-US-Standard-B", summary)
 
     return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
 

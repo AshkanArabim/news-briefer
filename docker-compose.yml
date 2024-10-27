@@ -15,10 +15,17 @@ services:
     ports:
       - 3000:3000
   
-  # server:
-  #   build: ./server
-  #   ports:
-  #     - 5000:5000
+  server:
+    build: ./server
+    environment:
+      - LLM_SERVER=llm:11434
+      - TTS_SERVER=tts:5002
+      - JWT_SECRET_KEY=MyRandomSecretKey!
+      - DB_USERNAME=bruh
+      - DB_PASSWORD=bruh
+      - MODEL_NAME=llama3.2
+    ports:
+      - 5000:5000
 
   tts:
     image: ghcr.io/coqui-ai/tts
@@ -51,6 +58,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
+              count: all # removing this thew everything back to CPU...
               capabilities: [gpu]
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     

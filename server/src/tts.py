@@ -1,6 +1,6 @@
 import parse_rss
-import goog_tts
-from goog_llm import summarize_news
+import server.src.tts as tts
+from server.src.llm import summarize_news
 from vertexai.generative_models import GenerativeModel
 
 if __name__ == "__main__":
@@ -24,4 +24,4 @@ if __name__ == "__main__":
                 article = "The next article is from" + article
             first_article = False
             print(article)
-            goog_tts.text_to_audio_stream("en-US-Studio-O", article)
+            tts.text_to_audio_stream("en-US-Studio-O", article)
