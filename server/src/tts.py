@@ -1,7 +1,8 @@
 import os
-import requests
+import aiohttp
 
-def text_to_audio_file(language: str, text: str):
+
+async def text_to_audio(text: str, language: str): # lang is the two-letter language code
     TTS_SERVER = os.environ.get("TTS_SERVER")
     
     url = f'http://{TTS_SERVER}/api/tts'
@@ -11,14 +12,9 @@ def text_to_audio_file(language: str, text: str):
         'style_wav': '',
         'language_id': language
     }
-    response = requests.get(url, params=params)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params) as response:
+            if response.status != 200:
+                raise Exception(f"Error: {response.status}, {await response.text()}")
+            return await response.read()  # raw audio
     
-    if response.status_code != 200:
-        raise Exception(f"Error: {response.status_code}, {response.text}")
-    
-    # Save the audio to a temporary file
-    temp_audio_file = "/tmp/temp_audio.mp3"
-    with open(temp_audio_file, "wb") as out:
-        out.write(response.content)
-    
-    return temp_audio_file

@@ -26,9 +26,6 @@ if not LLM_SERVER:
     raise Exception("LLM_SERVER env var not set!")
 
 
-print(LLM_SERVER) # debug
-
-
 client = AsyncClient(host=LLM_SERVER)
 
 
@@ -59,7 +56,10 @@ async def summarize_news(content: str, lang="en"):
     #     yield chunk
     
     # original approach: generate()
-    msg = "\n".join([*INSTRUCTIONS, *target_lang_msg, '"""', content, '"""'])
+    msg = "\n".join([*INSTRUCTIONS, target_lang_msg, '"""', content, '"""'])
+    
+    print(msg, flush=True) # debug
+    
     generator = await client.generate(model='llama3.2', prompt=msg, stream=True)
     async for chunk in generator:
         yield chunk

@@ -20,12 +20,16 @@ services:
     environment:
       - LLM_SERVER=llm:11434
       - TTS_SERVER=tts:5002
+      - DB_SERVER=db:5432
       - JWT_SECRET_KEY=MyRandomSecretKey!
-      - DB_USERNAME=bruh
-      - DB_PASSWORD=bruh
+      - DB_USERNAME=api_handler
+      - DB_PASSWORD=temp
       - MODEL_NAME=llama3.2
+      - PORT=5000
     ports:
       - 5000:5000
+    volumes:
+      - ./server:/usr/src/app # cmt: change in prod
 
   tts:
     image: ghcr.io/coqui-ai/tts
