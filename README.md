@@ -7,8 +7,18 @@ sources as RSS feeds, and then delivers the top stories rom all sources
 (**regardless of the source language**) on demand as a 5-6 minute audio 
 briefing.
 
+## Security
+**DON'T PUT ANY SENSITIVE INFO ON THE WEBSITE!!!** This project is by no means
+made by professionals. There could be massive, MASSIVE security vulnerabilities.
+
+Nothing is stopping you from using a bogus email address for the account, if 
+that makes you more comfortable.
+
 ## Roadmap
 - [ ] public hosting
+- [ ] streams - 
+  - [ ] play immediately as the news is summarized
+  - [ ] print the text as the summary is generated (in case audio is unclear)
 - [ ] audio controls
   - [ ] audio progress bar (for rewind / skip)
   - [ ] audio download button
@@ -22,6 +32,12 @@ briefing.
 - [ ] optional ads (for funding, if demand is high)
 
 ## Usage
+TODO: add `.env` instructions after service is decoupled from Google Cloud
+
+TODO: add UI usage instructions
+
+TODO: add supported languages
+
 - Install Docker
 - Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
 - Clone this repo and `cd` into it
