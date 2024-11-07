@@ -1,4 +1,5 @@
-import requests
+import aiohttp
+import asyncio
 import feedparser
 from bs4 import BeautifulSoup
 
@@ -8,27 +9,31 @@ from bs4 import BeautifulSoup
 """
 
 
-def get_article_content(article_url):
+async def get_article_content(article_url):
     # Make a GET request to fetch the article content
+    
+    print('============ article url:', article_url) # DEBUG
 
-    response = requests.get(article_url)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(article_url) as response:
+            # Check if the request was successful
+            if response.status == 200:
+                # Parse the page content using BeautifulSoup
+                content = await response.text()
+                soup = BeautifulSoup(content, 'html.parser')
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Parse the page content using BeautifulSoup
-        soup = BeautifulSoup(response.content, 'html.parser')
+                # Extract the main content of the article (this will vary depending on the website)
+                # Here we assume the main content is inside a <div> with a specific class, adjust as needed
+                # only grab text from <p> tags
 
-        # Extract the main content of the article (this will vary depending on the website)
-        # Here we assume the main content is inside a <div> with a specific class, adjust as needed
-        # only grab text from <p> tags
-
-        # Extract and clean the text
-        paragraphs = soup.find_all('p')
-        print(paragraphs) # DEBUG
-        article_text = '\n'.join([p.get_text(strip=True) for p in paragraphs])
-        return article_text
-    else:
-        return f"Failed to retrieve the article. Status code: {response.status_code}"
+                # Extract and clean the text
+                paragraphs = soup.find_all('p')
+                print(paragraphs)
+                article_text = '\n'.join([p.get_text(strip=True) for p in paragraphs])
+                return article_text
+            else:
+                print(f"Failed to retrieve the article. Status code: {response.status}")
+                return ""
 
 
 """
@@ -37,18 +42,14 @@ def get_article_content(article_url):
 
 :return: A list of article headlines and a concatenated string of the article content
 """
-def get_topn_articles(rss_url, n=5):
+async def get_topn_articles(rss_url, n=5):
     # Fetch the RSS feed
     feed = feedparser.parse(rss_url)
+    
+    print('==x=x=x=x============ feed:', feed)
 
     # Get the top 5 links and
-    articles = []
-    for entry in feed.entries:
-        if len(articles) >= n:
-            break
-        if (get_article_content(entry.link)) == "Could not find the article body.": # TODO: this is not needed
-            continue
-        articles.append(get_article_content(entry.link))
+    articles = await asyncio.gather(*[get_article_content(item["link"]) for item in feed.entries[:n]])
 
     return "\n\n".join(articles) if articles else "No articles found."
 

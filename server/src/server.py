@@ -84,7 +84,7 @@ async def get_all_sources_summary_chunks(email: str, lang: str):
     items_per_src = MAX_STORIES // len(sources)
     news_stories = []
     for source in sources:
-        news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
+        news_stories.append(await parse_rss.get_topn_articles(source, items_per_src + 1))
     text = "\n\n".join(news_stories)
     lang_map = {"spanish": "es", "french": "fr", "english": "en"}
     lang = lang_map[lang]
