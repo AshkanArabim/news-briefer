@@ -222,15 +222,19 @@ async def add_source(token: str, sourcejson: SourceJson):
     return {"message": "Source added successfully."}
 
 @app.post("/remove-source/{token}")
-async def remove_source(token: str, source: str):
+async def remove_source(token: str, sourcejson: SourceJson):
     decoded = check_auth(token)
     if not decoded:
         raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
     email = decoded["email"]
+    
+    source = sourcejson.source
+    
     db = get_db()
     cursor = db.cursor()
     cursor.execute("delete from sources where url = %s and email = %s", (source, email))
     db.commit()
+    
     return {"message": f"Source {source} removed from database."}
 
 if __name__ == "__main__":
