@@ -1,5 +1,4 @@
 import jwt
-import re
 import os
 import pg8000
 import asyncio
@@ -8,7 +7,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import logging
+import io
 
 import parse_rss
 import llm
@@ -94,11 +93,11 @@ async def get_all_sources_summary_chunks(email: str, lang: str):
 
 async def get_all_sources_summary_sentences(email: str, lang: str):
     sentence_word_list = []
-    DELIMITER = r"(?<=[.!?])\s+"
     async for chunk in get_all_sources_summary_chunks(email, lang):
         word = chunk["response"] # sample: {'model': 'llama3.2', 'created_at': '2024-10-31T13:27:25.388384885Z', 'response': ':', 'done': False}
         sentence_word_list.append(word)
-        if re.fullmatch(DELIMITER, word):
+        
+        if word in [".", "?", "!"]:
             sentence = "".join(sentence_word_list)
             sentence_word_list = []
             yield sentence
@@ -106,9 +105,33 @@ async def get_all_sources_summary_sentences(email: str, lang: str):
         yield "".join(sentence_word_list)
 
 async def get_all_sources_summary_audios(email: str, lang: str):
+    first_sentence = True
+    
     async for sentence in get_all_sources_summary_sentences(email, lang):
-        print("================================================================================================", sentence, flush=True) # debug
-        yield await tts.text_to_audio(sentence, lang)
+        if not sentence:
+            continue
+
+        # Get binary audio data for the current sentence
+        audio = await tts.text_to_audio(sentence, lang)
+        audio_io = io.BytesIO(audio)
+        
+        # If it's the first sentence, yield the full WAV (header + data)
+        if first_sentence:
+            # overwrite length bytes in wav header
+            # see https://stackoverflow.com/questions/2551943/how-to-stream-a-wav-file
+            audio_io.seek(4)
+            audio_io.write(b'\xff\xff\xff\xff')
+            audio_io.seek(io.SEEK_SET)
+            audio_io.seek(40)
+            audio_io.write(b'\xff\xff\xff\xff')
+            audio_io.seek(io.SEEK_SET)
+            
+            yield audio_io.read()  # Yield full WAV with header
+            first_sentence = False
+        else:
+            # For subsequent sentences, skip the 44-byte header
+            audio_io.seek(44)
+            yield audio_io.read()  # Yield only audio data frames
 
 @app.post("/login")
 async def login(user: User):
