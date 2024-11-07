@@ -82,9 +82,12 @@ def get_user_sources(email: str):
 async def get_all_sources_summary_chunks(email: str, lang: str):
     sources = get_user_sources(email)
     items_per_src = MAX_STORIES // len(sources)
-    news_stories = []
-    for source in sources:
-        news_stories.append(await parse_rss.get_topn_articles(source, items_per_src + 1))
+    
+    # fetch stories from all sources
+    news_stories = await asyncio.gather(
+        *[parse_rss.get_topn_articles(source, items_per_src + 1) for source in sources]
+    )
+    
     text = "\n\n".join(news_stories)
     lang_map = {"spanish": "es", "french": "fr", "english": "en"}
     lang = lang_map[lang]
