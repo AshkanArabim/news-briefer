@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Feed.css";
 import { BACKEND_URL } from "./vars";
@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 function Feed({ translations }) {
 	const [headers, setHeaders] = React.useState([]);
+	const stillOnPage = useRef(true)
 
 	useEffect(() => {
 		const fetchHeaders = async () => {
@@ -28,15 +29,35 @@ function Feed({ translations }) {
 		fetchHeaders();
 	}, []);
 
-	// Function to show an alert when the icon is clicked
-	const handleIconClick = async () => {
-		console.log("Speaker icon clicked!");
+	useEffect(() => {
+		console.log("Starting audio...");
 
-		const audio_blob = await fetch(`${BACKEND_URL}/get-audio/${store.getState().user.token}`);
-		const audioUrl = URL.createObjectURL(await audio_blob.blob());
-		const audio = new Audio(audioUrl);
-		audio.play();
-	};
+		stillOnPage.current = true;
+		let audio = null;
+	
+		fetch(`${BACKEND_URL}/get-audio/${store.getState().user.token}`)
+		.then((response) => response.blob())
+		.then((audioBlob) => {
+			const audioUrl = URL.createObjectURL(audioBlob);
+			audio = new Audio(audioUrl);
+
+			if (stillOnPage.current) {
+				return audio.play();
+			}
+		})
+		.catch((error) => {
+			console.error('Error playing audio:', error);
+		});
+
+		return () => {
+			stillOnPage.current = false; // prevent audio playing in background
+			if (audio != null) {
+				console.log('stopping audio...')
+				audio.pause();
+				audio.currentTime = 0;
+			}
+		}
+	}, [])
 
 	return (
 		<div className="feed-container">
@@ -55,13 +76,6 @@ function Feed({ translations }) {
 				<p className="feed-subtitle">
 					{translations ? translations.feedContent : "Here is what is happening today:"}
 				</p>
-				{/* Insert the speaker icon next to the text */}
-				<img
-					src="/speaker.png" // Corrected path for the public folder
-					alt="Speaker Icon"
-					className="speaker-icon"
-					onClick={handleIconClick} // Trigger alert on click
-				/>
 			</div>
 			<div>
 				<ul>
