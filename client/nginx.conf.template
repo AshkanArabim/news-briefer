@@ -1,0 +1,20 @@
+server {
+    listen 80;
+
+    # Serve frontend files
+    location / {
+        root /usr/share/nginx/html;
+        try_files $uri /index.html;  # Ensure React Router works
+    }
+
+    # Proxy API requests to the backend, removing the `api/` prefix
+    location /api/ {
+        rewrite ^/api/(.*) /$1 break;
+        resolver 127.0.0.11;  # using Docker's resolver
+        proxy_pass http://${BACKEND_URL};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

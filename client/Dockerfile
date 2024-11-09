@@ -11,4 +11,6 @@ RUN npm run build
 # stage 2: set up nginx to server built app
 FROM nginx:1
 COPY --from=build /home/node/app/build /usr/share/nginx/html
-CMD ["nginx", "-g", "daemon off;"]
+COPY ./nginx.conf.template /etc/nginx/templates/
+CMD envsubst '${BACKEND_URL}' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/conf.d/default.conf && \
+    nginx -g 'daemon off;'

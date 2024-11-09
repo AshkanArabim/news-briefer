@@ -5,7 +5,7 @@ import { BACKEND_URL } from "./vars";
 import store from "./store";
 
 function SignUp({ translations }) {
-	const [lang, setLang] = useState("");
+	const [lang, setLang] = useState("english");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
