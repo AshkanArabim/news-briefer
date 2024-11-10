@@ -46,7 +46,8 @@ services:
   # https://stackoverflow.com/questions/78500319/how-to-pull-model-automatically-with-container-creation
   # https://github.com/valiantlynx/ollama-docker/blob/main/docker-compose-ollama-gpu.yaml
   llm:
-    image: ollama/ollama:latest 
+    build: 
+      context: ./llm
     volumes:
       - llm_vol:/root/.ollama
     environment:
@@ -58,7 +59,6 @@ services:
             - driver: nvidia
               count: all # removing this thew everything back to CPU...
               capabilities: [gpu]
-    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     
 volumes:
   db_vol:

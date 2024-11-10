@@ -22,7 +22,5 @@ services:
       - ${TTS_PORT}:${TTS_PORT} # dev
 
   llm:
-    volumes:
-      - ./llm/entrypoint.sh:/entrypoint.sh # dev
     ports:
       - ${LLM_PORT}:${LLM_PORT}
