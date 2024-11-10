@@ -16,6 +16,7 @@ that makes you more comfortable.
 
 ## Roadmap
 - [ ] public hosting
+- [ ] support for briefing in all Llama 3.1 languages.
 - [ ] streams - 
   - [ ] play immediately as the news is summarized
   - [ ] print the text as the summary is generated (in case audio is unclear)
