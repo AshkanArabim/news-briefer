@@ -41,9 +41,12 @@ TODO: add supported languages
 - Install Docker
 - Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
 - Clone this repo and `cd` into it
-- `docker build --no-cache` - Just to make sure we're not using outdated images
-- `docker compose up -d`
+- `make prod` (or `make dev` if you plan on developing)
 - Open http://localhost:3000 in your browser.
+
+### Common issues
+- `ERR_BLOCKED_BY_CLIENT` in development mode
+  - Solution: Disable your adblocker
 
 ## Contributing
 Please open a pull request first, then ask to be assigned to it. We don't want
