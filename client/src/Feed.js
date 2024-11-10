@@ -33,28 +33,23 @@ function Feed({ translations }) {
 		console.log("Starting audio...");
 
 		stillOnPage.current = true;
+		const audioUrl = `${BACKEND_URL}/get-audio/${store.getState().user.token}`
 		let audio = null;
-	
-		fetch(`${BACKEND_URL}/get-audio/${store.getState().user.token}`)
-		.then((response) => response.blob())
-		.then((audioBlob) => {
-			const audioUrl = URL.createObjectURL(audioBlob);
-			audio = new Audio(audioUrl);
+		let audioPromise = null;
 
-			if (stillOnPage.current) {
-				return audio.play();
-			}
-		})
-		.catch((error) => {
-			console.error('Error playing audio:', error);
-		});
+		audio = new Audio(audioUrl);
+		if (stillOnPage.current) {
+			audioPromise = audio.play();
+		}
 
 		return () => {
 			stillOnPage.current = false; // prevent audio playing in background
-			if (audio != null) {
-				console.log('stopping audio...')
-				audio.pause();
-				audio.currentTime = 0;
+
+			if (audioPromise) {
+				audioPromise.then(() => {
+					console.log('stopping background audio...')
+					audio.pause();
+				});
 			}
 		}
 	}, [])
@@ -79,8 +74,8 @@ function Feed({ translations }) {
 			</div>
 			<div>
 				<ul>
-					{headers.map((headline) => (
-						<li>
+					{headers.map((headline, index) => (
+						<li key={index}>
 							<h3>{headline}</h3>
 						</li>
 					))}
