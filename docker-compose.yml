@@ -24,7 +24,7 @@ services:
     environment:
       - LLM_SERVER=llm:${LLM_PORT}
       - TTS_SERVER=tts:${TTS_PORT}
-      - DB_SERVER=${DB_PORT}
+      - DB_SERVER=db:${DB_PORT}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
