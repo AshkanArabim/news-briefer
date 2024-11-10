@@ -240,4 +240,5 @@ async def remove_source(token: str, sourcejson: SourceJson):
 if __name__ == "__main__":
     port = int(os.environ.get("SERVER_PORT"))
     host = "0.0.0.0"
-    uvicorn.run("server:app", host=host, port=port, reload=True)
+    reload = bool(os.environ.get("IS_DEV"))
+    uvicorn.run("server:app", host=host, port=port, reload=reload)

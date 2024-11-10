@@ -12,6 +12,8 @@ services:
       - ${CLIENT_PORT}:3000 # dev. in prod, should be 3000:80
   
   server:
+    environment:
+      - IS_DEV=true
     ports:
       - ${SERVER_PORT}:${SERVER_PORT} # dev
     volumes:
