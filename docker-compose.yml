@@ -1,41 +1,38 @@
 services:
   db:
-    build: ./db
+    build: 
+      context: ./db
     environment:
       # src: https://stackoverflow.com/a/26599273/14751074
-      - POSTGRES_USER=api_handler
-      - POSTGRES_PASSWORD=temp # TODO: security risk
-      - POSTGRES_DB=news_briefer # TODO: ugly names. change later
-    ports:
-      - 5432:5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db_vol:/var/lib/postgresql/data
+
   client:
-    build: ./client
+    build: 
+      context: ./client
+    environment:
+      - BACKEND_URL=server:${SERVER_PORT}
     ports:
-      - 3000:3000
+      - ${CLIENT_PORT}:80
   
   server:
-    build: ./server
+    build: 
+      context: ./server
     environment:
-      - LLM_SERVER=llm:11434
-      - TTS_SERVER=tts:5002
-      - DB_SERVER=db:5432
-      - JWT_SECRET_KEY=MyRandomSecretKey!
-      - DB_USERNAME=api_handler
-      - DB_PASSWORD=temp
-      - MODEL_NAME=llama3.2
-      - PORT=5000
-    ports:
-      - 5000:5000
-    volumes:
-      - ./server:/usr/src/app # cmt: change in prod
+      - LLM_SERVER=llm:${LLM_PORT}
+      - TTS_SERVER=tts:${TTS_PORT}
+      - DB_SERVER=${DB_PORT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MODEL_NAME=${MODEL_NAME}
+      - SERVER_PORT=${SERVER_PORT}
 
   tts:
     image: ghcr.io/coqui-ai/tts
-    # expose these ports for debugging
-    # ports:
-    #   - 5002:5002
     deploy:
       resources:
         reservations:
@@ -50,14 +47,10 @@ services:
   # https://github.com/valiantlynx/ollama-docker/blob/main/docker-compose-ollama-gpu.yaml
   llm:
     image: ollama/ollama:latest 
-    # expose these ports for debugging
-    # ports: 
-    #   - 11434:11434
     volumes:
       - llm_vol:/root/.ollama
-      - ./llm/entrypoint.sh:/entrypoint.sh
     environment:
-      - MODEL_NAME=llama3.2
+      - MODEL_NAME=${MODEL_NAME}
     deploy:
       resources:
         reservations:

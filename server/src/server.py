@@ -238,6 +238,6 @@ async def remove_source(token: str, sourcejson: SourceJson):
     return {"message": f"Source {source} removed from database."}
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT"))
+    port = int(os.environ.get("SERVER_PORT"))
     host = "0.0.0.0"
     uvicorn.run("server:app", host=host, port=port, reload=True)

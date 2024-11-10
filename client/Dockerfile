@@ -1,5 +1,5 @@
 # stage 1: build react app using node.js
-FROM node:alpine as build
+FROM node:alpine AS build
 
 # dir src: https://github.com/nodejs/docker-node/blob/main/README.md#npm-run
 WORKDIR /home/node/app 
