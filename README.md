@@ -43,6 +43,7 @@ TODO: add supported languages
 - Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
 - Clone this repo and `cd` into it
 - `make prod` (or `make dev` if you plan on developing)
+  - to only start / stop a specific service (e.g. tts, llm, db), just append `service=<service>`
 - Open http://localhost:3000 in your browser.
 
 ### Common issues
