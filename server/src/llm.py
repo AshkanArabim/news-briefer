@@ -37,11 +37,11 @@ from ollama import AsyncClient
 INSTRUCTIONS = """
 I'm gonna give you a news story.
 
-- Talk as if YOU are reporting the news on TV. DON'T mention "The article ..."
+- Talk as if YOU are reporting the news on <<LANGUAGE>> TV. DON'T mention "The article ..."
+- State the news agency (not the literal link) before you start summarizing. (e.g. This story is from ...)
 - DO NOT use AI phrases or commentary.
 - ONLY USE PARAGRAPH FORMATTING - no lists, bolding, or italics. ONLY PLAIN TEXT.
-- Summarize the main points in 3-4 sentences. Be clear and informative.
-- Translate the summary to <<LANGUAGE>>.
+- Summarize the main points in ONLY 1-2 paragraphs. Be clear and informative.
 
 Here's the story:
 """

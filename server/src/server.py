@@ -92,17 +92,19 @@ async def get_all_sources_summary_chunks(email: str, lang: str):
     # merge all stories into one list
     news_stories_old = news_stories
     news_stories = []
-    for source_stories in news_stories_old:
+    for i in range(len(news_stories_old)):
+        source_stories = news_stories_old[i]
+        source_link = sources[i]
         for story in source_stories:
-            news_stories.append(story)
+            news_stories.append("".join(["(from ", source_link, ")", story]))
     
     lang_map = {"spanish": "es", "french": "fr", "english": "en"}
     lang = lang_map[lang]
     
-    print("type of news_stories", type(news_stories)) # DEBUG
-    print("len of news_stories", len(news_stories)) # DEBUG
+    # print("type of news_stories", type(news_stories)) # DEBUG
+    # print("len of news_stories", len(news_stories)) # DEBUG
     for story in news_stories:
-        print("WOOOOOOOOOOOOOHOOOOOOOOOOOOOOOOOOOO HERE'S LEN OF ONE STORY:", len(story), flush=True) # DEBUG
+        # print("WOOOOOOOOOOOOOHOOOOOOOOOOOOOOOOOOOO HERE'S LEN OF ONE STORY:", len(story), flush=True) # DEBUG
         async for chunk in llm.summarize_news(story, lang):
             yield chunk
 
