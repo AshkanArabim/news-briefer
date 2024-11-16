@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 async def get_article_content(article_url):
     # Make a GET request to fetch the article content
     
-    print('============ article url:', article_url) # DEBUG
+    # print('============ article url:', article_url) # DEBUG
 
     async with aiohttp.ClientSession() as session:
         async with session.get(article_url) as response:
@@ -28,30 +28,22 @@ async def get_article_content(article_url):
 
                 # Extract and clean the text
                 paragraphs = soup.find_all('p')
-                print(paragraphs)
+                # print(paragraphs) # DEBUG
                 article_text = '\n'.join([p.get_text(strip=True) for p in paragraphs])
                 return article_text
             else:
-                print(f"Failed to retrieve the article. Status code: {response.status}")
+                # print(f"Failed to retrieve the article. Status code: {response.status}") # DEBUG
                 return ""
 
 
-"""
-:param rss_url: The URL of the RSS feed to fetch
-:param n: The number of articles to fetch
-
-:return: A list of article headlines and a concatenated string of the article content
-"""
+# returns a LIST of article bodies
 async def get_topn_articles(rss_url, n=5):
     # Fetch the RSS feed
     feed = feedparser.parse(rss_url)
     
-    print('==x=x=x=x============ feed:', feed)
+    # print('==x=x=x=x============ feed:', feed) # DEBUG
 
-    # Get the top 5 links and
-    articles = await asyncio.gather(*[get_article_content(item["link"]) for item in feed.entries[:n]])
-
-    return "\n\n".join(articles) if articles else "No articles found."
+    return await asyncio.gather(*[get_article_content(item["link"]) for item in feed.entries[:n]])
 
 def get_topn_headlines(rss_url, n=5):
     # Fetch the RSS feed
@@ -67,7 +59,7 @@ def get_topn_headlines(rss_url, n=5):
         if len(headlines) >= n:
             break
         
-        print("about to get article content")
+        # print("about to get article content") # DEBUG
         if (get_article_content(entry.link)) == "Could not find the article body.": # TODO: this is not needed
             continue
         headlines += [entry.title]
@@ -75,8 +67,9 @@ def get_topn_headlines(rss_url, n=5):
     return headlines
 
 
-if __name__ == "__main__":
-    # Fetch the RSS feed
-    rss_url = 'https://www.cbsnews.com/latest/rss/moneywatch'
-    print(get_topn_articles(rss_url))
-    print(len(get_topn_headlines(rss_url)))
+# DEBUG
+# if __name__ == "__main__":
+#     # Fetch the RSS feed
+#     rss_url = 'https://www.cbsnews.com/latest/rss/moneywatch'
+#     print(get_topn_articles(rss_url))
+#     print(len(get_topn_headlines(rss_url)))

@@ -84,15 +84,27 @@ async def get_all_sources_summary_chunks(email: str, lang: str):
     items_per_src = MAX_STORIES // len(sources)
     
     # fetch stories from all sources
+    # gives a list of lists, such that dimensions are sources and stories respectively
     news_stories = await asyncio.gather(
         *[parse_rss.get_topn_articles(source, items_per_src + 1) for source in sources]
     )
     
-    text = "\n\n".join(news_stories)
+    # merge all stories into one list
+    news_stories_old = news_stories
+    news_stories = []
+    for source_stories in news_stories_old:
+        for story in source_stories:
+            news_stories.append(story)
+    
     lang_map = {"spanish": "es", "french": "fr", "english": "en"}
     lang = lang_map[lang]
-    async for chunk in llm.summarize_news(text, lang):
-        yield chunk
+    
+    print("type of news_stories", type(news_stories)) # DEBUG
+    print("len of news_stories", len(news_stories)) # DEBUG
+    for story in news_stories:
+        print("WOOOOOOOOOOOOOHOOOOOOOOOOOOOOOOOOOO HERE'S LEN OF ONE STORY:", len(story), flush=True) # DEBUG
+        async for chunk in llm.summarize_news(story, lang):
+            yield chunk
 
 async def get_all_sources_summary_sentences(email: str, lang: str):
     sentence_word_list = []
