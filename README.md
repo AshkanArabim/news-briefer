@@ -33,13 +33,10 @@ that makes you more comfortable.
   - [ ] android app
 - [ ] optional ads (for funding, if demand is high)
 
-### README todolist:
-- add `.env` instructions
-- add UI usage instructions
-- add supported languages
-- add hardware requirements
+## Usage (the UI)
+Refer to the demo video above.
 
-## Usage
+## Usage (for self-hosting)
 - Install Docker
 - Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
 - Clone this repo and `cd` into it
@@ -54,9 +51,18 @@ All user configuration (stuff like ports, models, etc.) is found under `.env.pro
 
 For more information on configuring each part of the system, refer to the `README.md` file under each component's directory.
 
+### Hardware Requirements
+- Min 6GB RAM (~5.2GB from testing)
+- Min 6GB VRAM (~4.2GB from testing)
+  - NVIDIA GPUs recommended. The system has not beed tested on AMD GPUs. (Please make a PR if you manage to get it working on AMD / other GPU brands)
+  - Larger LLMs (e.g. Llama 3.1 70b) and TTS models will require more VRAM.
+
 ### Common issues
 - `ERR_BLOCKED_BY_CLIENT` in development mode
   - Solution: Disable your adblocker
+- No audio after clicking on "Feed"
+  - Make sure you've added valid RSS sources.
+  - Click "Home" and "Feed" again.
 
 ## Contributing
 Please open a pull request first, then ask to be assigned to it. We don't want
