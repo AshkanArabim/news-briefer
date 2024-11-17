@@ -1,47 +1,38 @@
 import jwt
-import flask
-from flask import Flask, g, request, jsonify
-from flask_cors import CORS
-from dotenv import load_dotenv
 import os
-import parse_rss
-import goog_llm
-import goog_tts
 import pg8000
+import asyncio
+import uvicorn
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import io
 
-load_dotenv()
+import parse_rss
+import llm
+import tts
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
+# logger = logging.getLogger('uvicorn.error')
+# logger.setLevel(logging.DEBUG)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # fetch environment variables
 MAX_STORIES = 6
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
-if DB_USERNAME == None or DB_PASSWORD == None:
+if DB_USERNAME is None or DB_PASSWORD is None:
     raise Exception("DB_USERNAME or DB_PASSWORD env vars not set!")
 
-
-def get_db():
-    if "db" not in g:
-        g.db = pg8000.connect(
-            host="127.0.0.1",
-            port=5432,
-            user=DB_USERNAME,
-            password=DB_PASSWORD,
-            database="news_briefer",
-        )
-    return g.db
-
-
-@app.teardown_appcontext
-def close_db(error):
-    db = g.pop("db", None)
-    if db is not None:
-        db.close()
-
-
-if len(os.environ.get("JWT_SECRET_KEY")) == 0:
+if len(os.environ.get("JWT_SECRET_KEY", "")) == 0:
     print("jwt secret key not found")
     exit()
 
@@ -50,9 +41,25 @@ RESPONSE_MESSAGES = {
     "valid_auth": "Token is valid. Welcome back!",  # this is mostly for debugging
 }
 
+class User(BaseModel):
+    email: str
+    password: str
+    lang: str = "english"
 
-# helpers
-def check_auth(token):
+class SourceJson(BaseModel):
+    source: str
+
+def get_db():
+    host, port = os.environ.get("DB_SERVER").split(":")
+    return pg8000.connect(
+        host=host,
+        port=port,
+        user=DB_USERNAME,
+        password=DB_PASSWORD,
+        database="news_briefer",
+    )
+
+def check_auth(token: str):
     if not token:
         return False
     try:
@@ -60,197 +67,192 @@ def check_auth(token):
             token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"]
         )
         if decoded.get("email") is not None:
-            g.current_user_email = decoded["email"]
-            g.current_user_language = decoded["lang"]
-            return True
+            return decoded
         return False
     except jwt.InvalidTokenError:
         return False
 
-
-def respond_invalid_auth():
-    return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]}), 401
-
-
-def respond_valid_auth():
-    return jsonify({"message": RESPONSE_MESSAGES["valid_auth"]}), 200
-  
-
-def get_user_sources():
-    # query db to get user's sources (assuming they're all valid rss feeds)
+def get_user_sources(email: str):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("select * from sources where email = %s", (g.current_user_email,))
+    cursor.execute("select * from sources where email = %s", (email,))
     results = cursor.fetchall()
     return [source for _, source in results]
 
-
-def get_all_sources_summary():
-    sources = get_user_sources()
-
-    # determine how many should be taken from each source
+async def get_all_sources_summary_chunks(email: str, lang: str):
+    sources = get_user_sources(email)
     items_per_src = MAX_STORIES // len(sources)
-
-    news_stories = []
-    for source in sources:
-        # n param = number of articles to summarize, default is 5 articles
-        news_stories.append(parse_rss.get_topn_articles(source, items_per_src + 1))
-
-    text = "\n\n".join(news_stories)
-    # TODO: add language support for spanish and french
-    if g.current_user_language == "spanish":
-        return goog_llm.summarize_news(text, "es")
-    elif g.current_user_language == "french":
-        return goog_llm.summarize_news(text, "fr")
-    return goog_llm.summarize_news(text)
-
-
-# API endpoints
-# TODO: make login generate a random RSA token
-@app.route("/login", methods=["POST"])
-def login():
-    req_body = request.json
-    db = get_db()
-    cursor = db.cursor()
-    results = cursor.execute(
-        "select * from users where email = %s and password = %s",
-        (req_body["email"], req_body["password"]),
+    
+    # fetch stories from all sources
+    # gives a list of lists, such that dimensions are sources and stories respectively
+    news_stories = await asyncio.gather(
+        *[parse_rss.get_topn_articles(source, items_per_src + 1) for source in sources]
     )
-    results = [r for r in results]
-    email, password, lang = results[0] if len(results) > 0 else (None, None, None)
+    
+    # merge all stories into one list
+    news_stories_old = news_stories
+    news_stories = []
+    for i in range(len(news_stories_old)):
+        source_stories = news_stories_old[i]
+        source_link = sources[i]
+        for story in source_stories:
+            news_stories.append("".join(["(from ", source_link, ")", story]))
+    
+    lang_map = {"spanish": "es", "french": "fr", "english": "en"}
+    lang = lang_map[lang]
+    
+    # print("type of news_stories", type(news_stories)) # DEBUG
+    # print("len of news_stories", len(news_stories)) # DEBUG
+    for story in news_stories:
+        # print("WOOOOOOOOOOOOOHOOOOOOOOOOOOOOOOOOOO HERE'S LEN OF ONE STORY:", len(story), flush=True) # DEBUG
+        async for chunk in llm.summarize_news(story, lang):
+            yield chunk
 
-    if email != None:
-        token = jwt.encode(
-            {"email": email, "lang": lang}, os.environ.get("JWT_SECRET_KEY")
-        )
-        return jsonify({"token": token})
+async def get_all_sources_summary_sentences(email: str, lang: str):
+    sentence_word_list = []
+    async for chunk in get_all_sources_summary_chunks(email, lang):
+        word = chunk["response"] # sample: {'model': 'llama3.2', 'created_at': '2024-10-31T13:27:25.388384885Z', 'response': ':', 'done': False}
+        sentence_word_list.append(word)
+        
+        if word in [".", "?", "!"]:
+            sentence = "".join(sentence_word_list)
+            sentence_word_list = []
+            yield sentence
+    if sentence_word_list:
+        yield "".join(sentence_word_list)
 
-    return jsonify({"message": "Invalid credentials"}), 401
+async def get_all_sources_summary_audios(email: str, lang: str):
+    first_sentence = True
+    
+    async for sentence in get_all_sources_summary_sentences(email, lang):
+        if not sentence:
+            continue
 
+        # Get binary audio data for the current sentence
+        audio = await tts.text_to_audio(sentence, lang)
+        audio_io = io.BytesIO(audio)
+        
+        # If it's the first sentence, yield the full WAV (header + data)
+        if first_sentence:
+            # overwrite length bytes in wav header
+            # see https://stackoverflow.com/questions/2551943/how-to-stream-a-wav-file
+            audio_io.seek(4)
+            audio_io.write(b'\xff\xff\xff\xff')
+            audio_io.seek(io.SEEK_SET)
+            audio_io.seek(40)
+            audio_io.write(b'\xff\xff\xff\xff')
+            audio_io.seek(io.SEEK_SET)
+            
+            yield audio_io.read()  # Yield full WAV with header
+            first_sentence = False
+        else:
+            # For subsequent sentences, skip the 44-byte header
+            audio_io.seek(44)
+            yield audio_io.read()  # Yield only audio data frames
 
-@app.route("/signup", methods=["POST"])
-def signup():
-    req_body = request.json
+@app.post("/login")
+async def login(user: User):
     db = get_db()
     cursor = db.cursor()
+    cursor.execute(
+        "select * from users where email = %s and password = %s",
+        (user.email, user.password),
+    )
+    results = cursor.fetchone()
+    if results:
+        email, password, lang = results
+        token = jwt.encode({"email": email, "lang": lang}, os.environ.get("JWT_SECRET_KEY"))
+        return {"token": token}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # check if user exists
-    cursor.execute("select * from users where email = %s", (req_body["email"],))
+@app.post("/signup")
+async def signup(user: User):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("select * from users where email = %s", (user.email,))
     existing_user = cursor.fetchone()
-    if existing_user is not None:
-        return (
-            jsonify(
-                {"message": "account with that email already exists! please log in."}
-            ),
-            409,
-        )
-
-    # create the user
+    if existing_user:
+        raise HTTPException(status_code=409, detail="Account with that email already exists! Please log in.")
     cursor.execute(
         "insert into users (email, password, lang) values (%s, %s, %s)",
-        (req_body["email"], req_body["password"], req_body["lang"]),
+        (user.email, user.password, user.lang),
     )
     db.commit()
+    return {"message": "User created successfully. Log in with your credentials"}
 
-    return jsonify(
-        {"message": "user created successfully. log in with your credentials"}
-    )
-
-
-@app.route("/get-text/<token>", methods=["GET"])
-def get_text(token):
-    if not check_auth(token):
-        return respond_invalid_auth()
-
-    summary = get_all_sources_summary()
-
-    return jsonify({"summary": summary}), 200
-
-
-@app.route("/get-headers/<token>", methods=['GET'])
-def get_headers(token):
-    if not check_auth(token):
-        return respond_invalid_auth()
-
-    sources = get_user_sources()
-
-    # determine how many should be taken from each source
+@app.get("/get-headers/{token}")
+async def get_headers(token: str):
+    decoded = check_auth(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
+    email = decoded["email"]
+    sources = get_user_sources(email)
     items_per_src = MAX_STORIES // len(sources)
-
     news_headlines = []
     for source in sources:
         news_headlines.extend(parse_rss.get_topn_headlines(source, items_per_src + 1))
+    return {"headlines": news_headlines}
 
-    return jsonify({"headlines": news_headlines})
+@app.get("/get-audio/{token}")
+async def get_audio(token: str):
+    decoded = check_auth(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
+    email = decoded["email"]
+    lang = decoded["lang"]
+    
+    if len(get_user_sources(email)) == 0:
+        raise HTTPException(status_code=400, detail="No sources found. Please add sources before requesting audio.")
+    
+    return StreamingResponse(get_all_sources_summary_audios(email, lang), media_type="audio/wav")
 
-@app.route("/get-audio/<token>", methods=["GET"])
-def get_audio(token):
-    if not check_auth(token):
-        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-    temp_audio_file_path = None
-    summary = get_all_sources_summary()
-    if g.current_user_language == "spanish":
-        temp_audio_file_path = goog_tts.text_to_audio_stream("es-US-News-D", summary)
-    elif g.current_user_language == "french":
-        temp_audio_file_path = goog_tts.text_to_audio_stream("fr-FR-Neural2-A", summary)
-    else:
-        temp_audio_file_path = goog_tts.text_to_audio_stream("en-US-Standard-B", summary)
-
-    return flask.send_file(temp_audio_file_path, mimetype="audio/mpeg")
-
-
-@app.route("/get-sources/<token>", methods=["GET"])
-def get_sources(token):
-    if not check_auth(token):
-        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-
+@app.get("/get-sources/{token}")
+async def get_sources(token: str):
+    decoded = check_auth(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
+    email = decoded["email"]
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("select * from sources where email = %s", (g.current_user_email,))
-
+    cursor.execute("select * from sources where email = %s", (email,))
     results = cursor.fetchall()
-    # ^^ returns a tuple: (<email>, <source>)
-    # ignoring the email field for now
-
     results = [src for _, src in results]
-    return jsonify({"sources": results})
+    return {"sources": results}
 
-
-@app.route("/add-source/<token>", methods=["POST"])
-def add_source(token):
-    req_body = request.json
-    if not check_auth(token):
-        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-    test = parse_rss.get_topn_headlines(req_body["source"])
-    if len(test) == 0:
-        return jsonify({"message": "invalid rss feed."}), 400
+@app.post("/add-source/{token}")
+async def add_source(token: str, sourcejson: SourceJson):
+    decoded = check_auth(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
+    email = decoded["email"]
+    
+    source = sourcejson.source
+    
     db = get_db()
     cursor = db.cursor()
-    cursor.execute(
-        "insert into sources values (%s, %s)",
-        (g.current_user_email, req_body["source"]),
-    )
+    cursor.execute("insert into sources values (%s, %s)", (email, source))
     db.commit()
+    
+    return {"message": "Source added successfully."}
 
-    return jsonify({"message": "source added successfully."})
-
-
-@app.route("/remove-source/<token>", methods=["POST"])
-def remove_source(token):
-    req_body = request.json
-    if not check_auth(token):
-        return jsonify({"message": RESPONSE_MESSAGES["invalid_auth"]})
-
+@app.post("/remove-source/{token}")
+async def remove_source(token: str, sourcejson: SourceJson):
+    decoded = check_auth(token)
+    if not decoded:
+        raise HTTPException(status_code=401, detail=RESPONSE_MESSAGES["invalid_auth"])
+    email = decoded["email"]
+    
+    source = sourcejson.source
+    
     db = get_db()
     cursor = db.cursor()
-    cursor.execute(
-        "delete from sources where url = %s and email = %s",
-        (req_body["source"], g.current_user_email),
-    )
+    cursor.execute("delete from sources where url = %s and email = %s", (source, email))
     db.commit()
-
-    return jsonify({"message": f"source {req_body['source']} removed from database."})
-
+    
+    return {"message": f"Source {source} removed from database."}
 
 if __name__ == "__main__":
-    app.run(debug=True)  # TODO: remove in prod
+    port = int(os.environ.get("SERVER_PORT"))
+    host = "0.0.0.0"
+    reload = bool(os.environ.get("IS_DEV"))
+    uvicorn.run("server:app", host=host, port=port, reload=reload)

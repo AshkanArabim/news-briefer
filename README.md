@@ -10,8 +10,19 @@ briefing.
 Video demo: https://www.youtube.com/watch?v=j8f1hfUKBAo  
 APOLOGIES for the 480p resolution. We made the mistake of not adjusting the canvas size in OBS. We'll upload a better demo video at some point in the future.
 
+## Security
+**DON'T PUT ANY SENSITIVE INFO ON THE WEBSITE!!!** This project is by no means
+made by professionals. There could be massive, MASSIVE security vulnerabilities.
+
+Nothing is stopping you from using a bogus email address for the account, if 
+that makes you more comfortable.
+
 ## Roadmap
 - [ ] public hosting
+- [ ] support for briefing in all Llama 3.1 languages.
+- [ ] streams - 
+  - [ ] play immediately as the news is summarized
+  - [ ] print the text as the summary is generated (in case audio is unclear)
 - [ ] audio controls
   - [ ] audio progress bar (for rewind / skip)
   - [ ] audio download button
@@ -23,6 +34,24 @@ APOLOGIES for the 480p resolution. We made the mistake of not adjusting the canv
   - [ ] android app
 - [ ] Google OAuth integration
 - [ ] optional ads (for funding, if demand is high)
+
+## Usage
+TODO: add `.env` instructions after service is decoupled from Google Cloud
+
+TODO: add UI usage instructions
+
+TODO: add supported languages
+
+- Install Docker
+- Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
+- Clone this repo and `cd` into it
+- `make prod` (or `make dev` if you plan on developing)
+  - to only start / stop a specific service (e.g. tts, llm, db), just append `service=<service>`
+- Open http://localhost:3000 in your browser.
+
+### Common issues
+- `ERR_BLOCKED_BY_CLIENT` in development mode
+  - Solution: Disable your adblocker
 
 ## Contributing
 Please open a pull request first, then ask to be assigned to it. We don't want

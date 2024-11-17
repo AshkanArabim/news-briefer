@@ -1,0 +1,65 @@
+services:
+  db:
+    build: 
+      context: ./db
+    environment:
+      # src: https://stackoverflow.com/a/26599273/14751074
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - db_vol:/var/lib/postgresql/data
+
+  client:
+    build: 
+      context: ./client
+    environment:
+      - BACKEND_URL=server:${SERVER_PORT}
+    ports:
+      - ${CLIENT_PORT}:80
+  
+  server:
+    build: 
+      context: ./server
+    environment:
+      - LLM_SERVER=llm:${LLM_PORT}
+      - TTS_SERVER=tts:${TTS_PORT}
+      - DB_SERVER=db:${DB_PORT}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MODEL_NAME=${MODEL_NAME}
+      - SERVER_PORT=${SERVER_PORT}
+
+  tts:
+    image: ghcr.io/coqui-ai/tts
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    entrypoint: ["python3", "TTS/server/server.py", "--model_name", "tts_models/en/vctk/vits", "--use_cuda", "true"]
+
+  # equivalent of `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
+  # https://stackoverflow.com/questions/78500319/how-to-pull-model-automatically-with-container-creation
+  # https://github.com/valiantlynx/ollama-docker/blob/main/docker-compose-ollama-gpu.yaml
+  llm:
+    build: 
+      context: ./llm
+    volumes:
+      - llm_vol:/root/.ollama
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # removing this thew everything back to CPU...
+              capabilities: [gpu]
+    
+volumes:
+  db_vol:
+  llm_vol:

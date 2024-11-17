@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Feed.css";
 import { BACKEND_URL } from "./vars";
@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 function Feed({ translations }) {
 	const [headers, setHeaders] = React.useState([]);
+	const stillOnPage = useRef(true)
 
 	useEffect(() => {
 		const fetchHeaders = async () => {
@@ -28,15 +29,30 @@ function Feed({ translations }) {
 		fetchHeaders();
 	}, []);
 
-	// Function to show an alert when the icon is clicked
-	const handleIconClick = async () => {
-		console.log("Speaker icon clicked!");
+	useEffect(() => {
+		console.log("Starting audio...");
 
-		const audio_blob = await fetch(`${BACKEND_URL}/get-audio/${store.getState().user.token}`);
-		const audioUrl = URL.createObjectURL(await audio_blob.blob());
-		const audio = new Audio(audioUrl);
-		audio.play();
-	};
+		stillOnPage.current = true;
+		const audioUrl = `${BACKEND_URL}/get-audio/${store.getState().user.token}`
+		let audio = null;
+		let audioPromise = null;
+
+		audio = new Audio(audioUrl);
+		if (stillOnPage.current) {
+			audioPromise = audio.play();
+		}
+
+		return () => {
+			stillOnPage.current = false; // prevent audio playing in background
+
+			if (audioPromise) {
+				audioPromise.then(() => {
+					console.log('stopping background audio...')
+					audio.pause();
+				});
+			}
+		}
+	}, [])
 
 	return (
 		<div className="feed-container">
@@ -55,18 +71,11 @@ function Feed({ translations }) {
 				<p className="feed-subtitle">
 					{translations ? translations.feedContent : "Here is what is happening today:"}
 				</p>
-				{/* Insert the speaker icon next to the text */}
-				<img
-					src="/speaker.png" // Corrected path for the public folder
-					alt="Speaker Icon"
-					className="speaker-icon"
-					onClick={handleIconClick} // Trigger alert on click
-				/>
 			</div>
 			<div>
 				<ul>
-					{headers.map((headline) => (
-						<li>
+					{headers.map((headline, index) => (
+						<li key={index}>
 							<h3>{headline}</h3>
 						</li>
 					))}
