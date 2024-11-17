@@ -1,28 +1,35 @@
 services:
   db:
     ports:
-      - ${DB_PORT}:${DB_PORT} # dev
+      - ${DB_PORT}:${DB_PORT}
 
   client:
     build: 
-      dockerfile: Dockerfile.dev # dev
+      dockerfile: Dockerfile.dev
     environment:
       - REACT_APP_BACKEND_URL=localhost:${SERVER_PORT}
+      - NODE_ENV=development
     ports: !override
       - ${CLIENT_PORT}:3000 # dev. in prod, should be 3000:80
+    volumes:
+      - ./client:/home/node/app
+      - client_dev_node_modules:/home/node/app/node_modules # prevent node_modules from being overridden by local equivalent
   
   server:
     environment:
       - IS_DEV=true
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT} # dev
+      - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
-      - ./server:/usr/src/app # dev
+      - ./server:/usr/src/app
 
   tts:
     ports:
-      - ${TTS_PORT}:${TTS_PORT} # dev
+      - ${TTS_PORT}:${TTS_PORT}
 
   llm:
     ports:
       - ${LLM_PORT}:${LLM_PORT}
+
+volumes:
+  client_dev_node_modules:
