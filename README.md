@@ -20,7 +20,7 @@ that makes you more comfortable.
 - [ ] public hosting
 - [ ] support for briefing in all Llama 3.1 languages.
 - [ ] streams - 
-  - [ ] play immediately as the news is summarized
+  - [x] play immediately as the news is summarized
   - [ ] print the text as the summary is generated (in case audio is unclear)
 - [ ] audio controls
   - [ ] audio progress bar (for rewind / skip)
@@ -29,9 +29,8 @@ that makes you more comfortable.
   - [ ] speed controls for audio
 - [ ] porting
   - [ ] electron app
-  - [ ] docker container (for easy self-hosting)
+  - [x] docker container (for easy self-hosting)
   - [ ] android app
-- [ ] Google OAuth integration
 - [ ] optional ads (for funding, if demand is high)
 
 ## Usage
