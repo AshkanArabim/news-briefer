@@ -47,6 +47,7 @@ that makes you more comfortable.
   - to detach and get your terminal back, add `detached=-d`
   - to only start / stop a specific service (e.g. tts, llm, db), just append `service=<service>`
 - Open http://localhost:3000 in your browser.
+- To stop the app, run `make down` (or `docker compose down`)
 
 ### Configuration
 All user configuration (stuff like ports, models, etc.) is found under `.env.prod`. The goal is to keep this setup so configuration is simple.
