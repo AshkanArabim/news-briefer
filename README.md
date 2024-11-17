@@ -37,6 +37,7 @@ that makes you more comfortable.
 - add `.env` instructions
 - add UI usage instructions
 - add supported languages
+- add hardware requirements
 
 ## Usage
 - Install Docker
