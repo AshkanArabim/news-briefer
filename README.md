@@ -7,8 +7,7 @@ sources as RSS feeds, and then delivers the top stories rom all sources
 (**regardless of the source language**) on demand as a 5-6 minute audio 
 briefing.
 
-Video demo: https://www.youtube.com/watch?v=j8f1hfUKBAo  
-APOLOGIES for the 480p resolution. We made the mistake of not adjusting the canvas size in OBS. We'll upload a better demo video at some point in the future.
+Video demo: https://www.youtube.com/watch?v=FGFq3OgrUZ4
 
 ## Security
 **DON'T PUT ANY SENSITIVE INFO ON THE WEBSITE!!!** This project is by no means
