@@ -17,7 +17,7 @@ Nothing is stopping you from using a bogus email address for the account, if
 that makes you more comfortable.
 
 ## Roadmap
-- [ ] public hosting
+- [x] public hosting: http://news.ashkan.zone
 - [ ] support for briefing in all Llama 3.1 languages.
 - [ ] streams - 
   - [x] play immediately as the news is summarized
