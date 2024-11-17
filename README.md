@@ -7,7 +7,12 @@ sources as RSS feeds, and then delivers the top stories rom all sources
 (**regardless of the source language**) on demand as a 5-6 minute audio 
 briefing.
 
-Video demo: https://www.youtube.com/watch?v=FGFq3OgrUZ4
+Mix sources from French, Arabic, Korean, Russian, etc., it doesn't matter.
+Everything is translated to your language before audio is played.
+
+**Video demo:**
+
+[![image](https://github.com/user-attachments/assets/ee8288b9-fd88-4901-ac7b-60b2c1a92ce7)](https://youtu.be/OtwY-ry_MwY)
 
 ## Security
 **DON'T PUT ANY SENSITIVE INFO ON THE WEBSITE!!!** This project is by no means
