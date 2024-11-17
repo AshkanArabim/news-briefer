@@ -47,6 +47,11 @@ that makes you more comfortable.
   - to only start / stop a specific service (e.g. tts, llm, db), just append `service=<service>`
 - Open http://localhost:3000 in your browser.
 
+### Configuration
+All user configuration (stuff like ports, models, etc.) is found under `.env.prod`. The goal is to keep this setup so configuration is simple.
+
+For more information on configuring each part of the system, refer to the `README.md` file under each component's directory.
+
 ### Common issues
 - `ERR_BLOCKED_BY_CLIENT` in development mode
   - Solution: Disable your adblocker
