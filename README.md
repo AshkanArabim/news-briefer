@@ -10,6 +10,8 @@ briefing.
 Mix sources from French, Arabic, Korean, Russian, etc., it doesn't matter.
 Everything is translated to your language before audio is played.
 
+**Try it yourself:** http://news.ashkan.zone
+
 **Video demo:**
 
 [![image](https://github.com/user-attachments/assets/ee8288b9-fd88-4901-ac7b-60b2c1a92ce7)](https://youtu.be/OtwY-ry_MwY)
@@ -22,7 +24,7 @@ Nothing is stopping you from using a bogus email address for the account, if
 that makes you more comfortable.
 
 ## Roadmap
-- [x] public hosting: http://news.ashkan.zone
+- [x] public hosting:
 - [ ] support for briefing in all Llama 3.1 languages.
 - [ ] streams - 
   - [x] play immediately as the news is summarized
