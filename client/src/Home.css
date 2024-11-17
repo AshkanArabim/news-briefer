@@ -27,6 +27,7 @@
 /* Container for buttons */
 .button-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;  /* Add some space between buttons */
 }
@@ -42,6 +43,10 @@
   cursor: pointer;
   font-size: 20px;           /* Larger font size */
   transition: all 0.3s ease; /* Smooth transition on all properties */
+}
+
+button.gh-button {
+  background-color: black;
 }
 
 /* Style the subtitle */

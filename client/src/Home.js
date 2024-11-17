@@ -9,8 +9,8 @@ function Home({ translations }) {
 
   return (
     <div className="home-container">
-      <h1 className="home-title">{translations.homeTitle}</h1>
-      <h1 className="home-subtitle">{translations.homeSubtitle}</h1>
+      <h1 className="home-title">Newsbridge</h1>
+      {/* <h1 className="home-subtitle">{translations.homeSubtitle}</h1> */}
       <div className="button-container">
         {loggedIn ? (
           <>
@@ -31,6 +31,10 @@ function Home({ translations }) {
             </Link>
           </>
         )}
+
+        <a href="https://github.com/AshkanArabim/newsbridge">
+          <button className="home-button gh-button">Star on GitHub</button>
+        </a>
       </div>
     </div>
   );
