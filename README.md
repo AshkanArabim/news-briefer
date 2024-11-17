@@ -33,13 +33,12 @@ that makes you more comfortable.
   - [ ] android app
 - [ ] optional ads (for funding, if demand is high)
 
+### README todolist:
+- add `.env` instructions
+- add UI usage instructions
+- add supported languages
+
 ## Usage
-TODO: add `.env` instructions after service is decoupled from Google Cloud
-
-TODO: add UI usage instructions
-
-TODO: add supported languages
-
 - Install Docker
 - Install the [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) on your machine.
 - Clone this repo and `cd` into it
