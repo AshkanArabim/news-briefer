@@ -9,6 +9,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db_vol:/var/lib/postgresql/data
+    restart: unless-stopped
 
   client:
     build: 
@@ -17,6 +18,7 @@ services:
       - BACKEND_URL=server:${SERVER_PORT}
     ports:
       - ${CLIENT_PORT}:80
+    restart: unless-stopped
   
   server:
     build: 
@@ -30,6 +32,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - MODEL_NAME=${MODEL_NAME}
       - SERVER_PORT=${SERVER_PORT}
+    restart: unless-stopped
 
   tts:
     image: ghcr.io/coqui-ai/tts
@@ -41,6 +44,7 @@ services:
               count: all
               capabilities: [gpu]
     entrypoint: ["python3", "TTS/server/server.py", "--model_name", "tts_models/en/vctk/vits", "--use_cuda", "true"]
+    restart: unless-stopped
 
   # equivalent of `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
   # https://stackoverflow.com/questions/78500319/how-to-pull-model-automatically-with-container-creation
@@ -59,6 +63,7 @@ services:
             - driver: nvidia
               count: all # removing this thew everything back to CPU...
               capabilities: [gpu]
+    restart: unless-stopped
     
 volumes:
   db_vol:
