@@ -1,0 +1,11 @@
+[project]
+name = "tts"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "coqui-tts>=0.24.3",
+    "fastapi>=0.115.6",
+    "uvicorn>=0.32.1",
+]
