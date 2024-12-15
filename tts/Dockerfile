@@ -24,14 +24,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# download the TTS model
-# generates and deletes a useless audio transcription to trigger model download
-# Coqui doesn't provide a command only for downloading models
-# see https://github.com/coqui-ai/TTS/discussions/2609
-RUN yes | tts --text "a" \
-    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
-    --speaker_idx "Ana Florence" \
-    --language_idx en --out_path /tmp/trash.wav && rm /tmp/trash.wav
-
-# run the app (fastapi by default)
-CMD ["python", "./tts-server.py"]
+# run startup script
+CMD ["./entrypoint.sh"]
