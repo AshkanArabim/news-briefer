@@ -35,7 +35,12 @@ services:
     restart: unless-stopped
 
   tts:
-    image: ghcr.io/coqui-ai/tts
+    build:
+      context: ./tts
+    volumes:
+      - tts_vol:/root/.loca/share/tts
+    environment:
+      - TTS_PORT=${TTS_PORT}
     deploy:
       resources:
         reservations:
@@ -43,7 +48,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    entrypoint: ["python3", "TTS/server/server.py", "--model_name", "tts_models/en/vctk/vits", "--use_cuda", "true"]
     restart: unless-stopped
 
   # equivalent of `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
@@ -68,3 +72,4 @@ services:
 volumes:
   db_vol:
   llm_vol:
+  tts_vol:
