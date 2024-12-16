@@ -24,8 +24,12 @@ services:
       - ./server:/usr/src/app
 
   tts:
+    environment:
+      - IS_DEV=true
     ports:
       - ${TTS_PORT}:${TTS_PORT}
+    volumes:
+      - ./tts/tts-server.py:/app/tts-server.py
 
   llm:
     ports:
