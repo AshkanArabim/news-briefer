@@ -25,4 +25,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENTRYPOINT []
 
 # run startup script
-CMD ["./entrypoint.sh"]
+CMD ["python", "./tts-server.py"]

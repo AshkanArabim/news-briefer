@@ -38,9 +38,12 @@ services:
     build:
       context: ./tts
     volumes:
-      - tts_vol:/root/.loca/share/tts
+      - tts_vol:/root/.local/share/tts
     environment:
       - TTS_PORT=${TTS_PORT}
+      # skip xtts v2's license agreement
+      # see https://github.com/idiap/coqui-ai-TTS/issues/145#issuecomment-2466309889
+      - COQUI_TOS_AGREED=1
     deploy:
       resources:
         reservations:
