@@ -79,6 +79,9 @@ All user configuration (stuff like ports, models, etc.) is found under `.env.pro
 
 For more information on configuring each part of the system, refer to the `README.md` file under each component's directory.
 
+### Updating
+Simply run `git pull` in the project directory periodically, and restart the service.
+
 ### Hardware Requirements
 - Min 6GB RAM (~5.2GB from testing)
 - Min 6GB VRAM (~4.2GB from testing)
