@@ -24,8 +24,29 @@ Nothing is stopping you from using a bogus email address for the account, if
 that makes you more comfortable.
 
 ## Roadmap
-- [x] public hosting:
-- [ ] support for briefing in all Llama 3.1 languages.
+- [x] public hosting
+- [ ] support for more audio summary languages.
+  - [ ] languages officially supported by both Llama (LLM) and XTTS (TTS):
+    - [x] English
+    - [x] French
+    - [ ] German
+    - [ ] Hindi
+    - [ ] Italian
+    - [ ] Portuguese
+    - [x] Spanish
+  - [ ] languages not fully supported by Llama or XTTS
+    - [ ] Arabic
+    - [ ] Chinese
+    - [ ] Czech
+    - [ ] Hindi
+    - [ ] Hungarian
+    - [ ] Japanese
+    - [ ] Korean
+    - [ ] Persian
+    - [ ] Polish
+    - [ ] Russian
+    - [ ] Thai
+    - [ ] Turkish
 - [ ] streams - 
   - [x] play immediately as the news is summarized
   - [ ] print the text as the summary is generated (in case audio is unclear)
