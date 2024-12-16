@@ -18,11 +18,13 @@ app = FastAPI()
 # logger.setLevel(logging.DEBUG)
 
 # Only add CORS middleware in development
-if os.environ.get("IS_DEV"):
+if os.environ.get("IS_DEV") == "true":
+    print("Adding CORS middleware to dev server")
+    origin = "http://localhost:" + os.environ.get("CLIENT_PORT")
     app.add_middleware(
         CORSMiddleware,
         # Only allow requests from frontend dev server
-        allow_origins=["http://localhost:3000"],  # Assuming frontend runs on port 3000
+        allow_origins=[origin],
         allow_credentials=True,
         allow_methods=["GET", "POST"],  # Only specify the methods you need
         allow_headers=["Authorization", "Content-Type"],  # Only specify the headers you need
