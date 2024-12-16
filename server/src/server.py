@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import io
+from langcodes import Language
 
 import parse_rss
 import llm
@@ -98,9 +99,6 @@ async def get_all_sources_summary_chunks(email: str, lang: str):
         for story in source_stories:
             news_stories.append("".join(["(from ", source_link, ")", story]))
     
-    lang_map = {"spanish": "es", "french": "fr", "english": "en"}
-    lang = lang_map[lang]
-    
     # print("type of news_stories", type(news_stories)) # DEBUG
     # print("len of news_stories", len(news_stories)) # DEBUG
     for story in news_stories:
@@ -161,6 +159,10 @@ async def login(user: User):
     results = cursor.fetchone()
     if results:
         email, password, lang = results
+        
+        # convert lang to two-letter code
+        lang = Language.find(lang).to_tag()
+        
         token = jwt.encode({"email": email, "lang": lang}, os.environ.get("JWT_SECRET_KEY"))
         return {"token": token}
     raise HTTPException(status_code=401, detail="Invalid credentials")

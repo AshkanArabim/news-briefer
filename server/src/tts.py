@@ -10,9 +10,7 @@ async def text_to_audio(text: str, language: str): # lang is the two-letter lang
     url = f'http://{TTS_SERVER}/api/tts'
     params = {
         'text': text,
-        'speaker_id': 'p376',
-        'style_wav': '',
-        'language_id': language
+        'languagecode': language
     }
     async with aiohttp.ClientSession() as session:
         async with session.get(url, params=params) as response:
