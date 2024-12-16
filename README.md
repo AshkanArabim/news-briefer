@@ -96,8 +96,4 @@ Simply run `git pull` in the project directory periodically, and restart the ser
   - Click "Home" and "Feed" again.
 
 ## Contributing
-Please open a pull request first, then ask to be assigned to it. We don't want
-to be stepping on each other's toes while the project is under heavy 
-development.
-
-These rules will become more comprehensive as the project grows.
+Please refer to [CONTRIBUTING.md](CONTRIBUTING.md)
