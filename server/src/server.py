@@ -17,13 +17,16 @@ app = FastAPI()
 # logger = logging.getLogger('uvicorn.error')
 # logger.setLevel(logging.DEBUG)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Only add CORS middleware in development
+if os.environ.get("IS_DEV"):
+    app.add_middleware(
+        CORSMiddleware,
+        # Only allow requests from frontend dev server
+        allow_origins=["http://localhost:3000"],  # Assuming frontend runs on port 3000
+        allow_credentials=True,
+        allow_methods=["GET", "POST"],  # Only specify the methods you need
+        allow_headers=["Authorization", "Content-Type"],  # Only specify the headers you need
+    )
 
 # fetch environment variables
 MAX_STORIES = 6
