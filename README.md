@@ -38,7 +38,6 @@ that makes you more comfortable.
     - [ ] Arabic
     - [ ] Chinese
     - [ ] Czech
-    - [ ] Hindi
     - [ ] Hungarian
     - [ ] Japanese
     - [ ] Korean
