@@ -27,7 +27,6 @@ Steps to reproduce the behavior:
 
 ## Client information:
 <!--
-- OS:
 - Browser:
 -->
 
@@ -35,7 +34,7 @@ Steps to reproduce the behavior:
 <!-- 
 N/A if not self-hosted 
 - OS:
-- Newsbridge version (or latest commit):
+- Newsbridge version (or latest commit hash):
 - Server CPU:
 - Server RAM:
 - Server GPU:
