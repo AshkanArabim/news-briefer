@@ -85,9 +85,13 @@ function SignUp({ translations }) {
 							handleChange(e);
 						}}
 					>
-						<option>english</option>
-						<option>spanish</option>
-						<option>french</option>
+						<option>English</option>
+						<option>French</option>
+						<option>German</option>
+						<option>Hindi</option>
+						<option>Italian</option>
+						<option>Portuguese</option>
+						<option>Spanish</option>
 					</select>
 				</div>
 
