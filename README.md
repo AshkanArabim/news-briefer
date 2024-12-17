@@ -26,13 +26,13 @@ that makes you more comfortable.
 ## Roadmap
 - [x] public hosting
 - [ ] support for more audio summary languages.
-  - [ ] languages officially supported by both Llama (LLM) and XTTS (TTS):
+  - [x] languages officially supported by both Llama (LLM) and XTTS (TTS):
     - [x] English
     - [x] French
-    - [ ] German
-    - [ ] Hindi
-    - [ ] Italian
-    - [ ] Portuguese
+    - [x] German
+    - [x] Hindi
+    - [x] Italian
+    - [x] Portuguese
     - [x] Spanish
   - [ ] languages not fully supported by Llama or XTTS
     - [ ] Arabic
