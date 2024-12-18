@@ -7,8 +7,16 @@ sources as RSS feeds, and then delivers the top stories rom all sources
 (**regardless of the source language**) on demand as a 5-6 minute audio 
 briefing.
 
-Mix sources from French, Arabic, Korean, Russian, etc., it doesn't matter.
+Mix sources from French, Hindi, Italian, etc., it doesn't matter.
 Everything is translated to your language before audio is played.
+
+**Note:** Source languages are limited by the chosen LLM (Llama 3.2 by default)
+and target languages (in which you'll hear the audio) are languages supported
+by both the LLM and the TSS (XTTS v2 in this case).
+See below for details. 
+
+You COULD go beyond the officially supported languages,
+but you may get a garbage output.
 
 **Try it yourself:** http://news.ashkan.zone
 
@@ -23,29 +31,32 @@ made by professionals. There could be massive, MASSIVE security vulnerabilities.
 Nothing is stopping you from using a bogus email address for the account, if 
 that makes you more comfortable.
 
+## Supported languages
+Input languages / languages of your sources (([source](https://ollama.com/library/llama3.2))):
+
+Note that even though Llama 3.3 doesn't expand this list, it performs much 
+better on the "unsupported" languages, such as Persian.
+- English
+- German
+- French
+- Italian
+- Portuguese
+- Hindi
+- Spanish
+- Thai
+
+Output languages / language of the output audio (union of [Llama 3.2 languages](https://ollama.com/library/llama3.2) and [XTTS v2 languages](https://coqui-tts.readthedocs.io/en/latest/models/xtts.html#languages)):
+- English
+- German
+- French
+- Italian
+- Portuguese
+- Hindi
+- Spanish
+
 ## Roadmap
 - [x] public hosting
-- [ ] support for more audio summary languages.
-  - [x] languages officially supported by both Llama (LLM) and XTTS (TTS):
-    - [x] English
-    - [x] French
-    - [x] German
-    - [x] Hindi
-    - [x] Italian
-    - [x] Portuguese
-    - [x] Spanish
-  - [ ] languages not fully supported by Llama or XTTS
-    - [ ] Arabic
-    - [ ] Chinese
-    - [ ] Czech
-    - [ ] Hungarian
-    - [ ] Japanese
-    - [ ] Korean
-    - [ ] Persian
-    - [ ] Polish
-    - [ ] Russian
-    - [ ] Thai
-    - [ ] Turkish
+- [ ] support for popular LLM and TTS APIs (e.g. if someone wants to use GPT-4o and ElevenLabs)
 - [ ] streams - 
   - [x] play immediately as the news is summarized
   - [ ] print the text as the summary is generated (in case audio is unclear)
