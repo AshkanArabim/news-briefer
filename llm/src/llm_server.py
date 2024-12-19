@@ -50,8 +50,8 @@ def generate(prompt: str):
 
 
 if __name__ == "__main__":
-    port = os.environ.get("TTS_PORT")
-    assert port is not None, "TTS_PORT in tts-server is not set!"
+    port = os.environ.get("LLM_PORT")
+    assert port is not None, "LLM_PORT in llm-server is not set!"
     port = int(port)
 
     is_dev = os.environ.get("IS_DEV", "false").lower() == "true"
