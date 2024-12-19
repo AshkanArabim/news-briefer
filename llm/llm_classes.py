@@ -16,18 +16,19 @@ class AbstractModel(ABC):
 
 class Llama(AbstractModel):
     def __init__(self, llama_name: str):
+        # src: https://stackoverflow.com/a/78501628/14751074
+        # translated ^^'s bash script logic to python
+
         # start the ollama server in the background
         print("Waiting for Ollama server to start")
         subprocess.Popen(
             ["ollama", "serve"],
             start_new_session=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
         )
         time.sleep(0.5)  # ugly hack.
 
         # download the model if it's not here
-        print("Downloading if", llama_name, "not already downloaded...", flush=True)
+        print("Downloading if'", llama_name, "'not already downloaded...", flush=True)
         ollama.pull(llama_name)
 
         self.model_name = llama_name
