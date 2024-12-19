@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import ollama
 import subprocess
 import time
+import google.generativeai as genai
 
 
-# TODO: model superclass for consistency
 class AbstractModel(ABC):
     @abstractmethod
     def generate(self, prompt: str):
@@ -24,8 +24,8 @@ class Llama(AbstractModel):
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        time.sleep(0.5) # ugly hack. 
-        
+        time.sleep(0.5)  # ugly hack.
+
         # download the model if it's not here
         print("Downloading if", llama_name, "not already downloaded...", flush=True)
         ollama.pull(llama_name)
@@ -39,10 +39,26 @@ class Llama(AbstractModel):
 
 
 class Gemini2(AbstractModel):
-    def __init__(self, api_key: str):
-        # TODO:
-        pass
+    def __init__(self, model_name: str, api_key: str):
+        # src: copied code from Google's AI studio
+        genai.configure(api_key=api_key)
+
+        # Create the model
+        generation_config = {
+            "temperature": 1,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+            "response_mime_type": "text/plain",
+        }
+
+        self.model = genai.GenerativeModel(
+            model_name=model_name,
+            generation_config=generation_config,
+        )
 
     def generate(self, prompt: str):
-        # TODO:
-        pass
+        # src: https://github.com/google-gemini/generative-ai-python/blob/main/docs/api/google/generativeai/GenerativeModel.md#generate_content
+        stream = self.model.generate_content(prompt, stream=True)
+        for chunk in stream:
+            yield chunk.text

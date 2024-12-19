@@ -24,10 +24,10 @@ async def lifespan(app: FastAPI):
     
     if model_name.startswith("llama"):
         model = llm_classes.Llama(llama_name=model_name)
-    elif model_name.startswith("gemini2.0"):
-        _, api_key = model_name.split('|')
+    elif model_name.startswith("gemini"):
+        gemini_model_name, api_key = model_name.split('|')
         
-        model = llm_classes.Gemini2(api_key=api_key)
+        model = llm_classes.Gemini2(model_name=gemini_model_name, api_key=api_key)
     else:
         raise Exception('Invalid model name:', model_name)
     
